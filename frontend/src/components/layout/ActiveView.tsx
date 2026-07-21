@@ -102,13 +102,14 @@ export const ActiveView: React.FC<ActiveViewProps> = ({
 
   const handleSearchUsers = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!searchNickname.trim() || !profile) return;
+    const query = searchNickname.replace(/\s*#\s*/, '#').trim();
+    if (!query || !profile) return;
     setLoadingSearch(true);
     try {
       const { data } = await supabase
         .from('profiles')
         .select('*')
-        .ilike('username', `%${searchNickname.trim()}%`)
+        .ilike('username', `%${query}%`)
         .neq('id', profile.id)
         .limit(10);
       if (data) {

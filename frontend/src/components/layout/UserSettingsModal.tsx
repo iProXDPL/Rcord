@@ -42,6 +42,66 @@ export const UserSettingsModal: React.FC<UserSettingsModalProps> = ({ isOpen, on
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [statusType, setStatusType] = useState<'success' | 'error' | null>(null);
 
+  // Account details states
+  const [birthdate, setBirthdate] = useState(profile?.birthdate || '');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [accountUploading, setAccountUploading] = useState(false);
+  const [accountStatusMessage, setAccountStatusMessage] = useState<string | null>(null);
+  const [accountStatusType, setAccountStatusType] = useState<'success' | 'error' | null>(null);
+
+  const handleSaveAccount = async () => {
+    if (!profile) return;
+    setAccountUploading(true);
+    setAccountStatusMessage(null);
+    setAccountStatusType(null);
+
+    try {
+      // 1. Update Birthdate if modified
+      if (birthdate !== (profile.birthdate || '')) {
+        const { error: dbErr } = await supabase
+          .from('profiles')
+          .update({ birthdate })
+          .eq('id', profile.id);
+        
+        if (dbErr) throw dbErr;
+
+        // Update state in Zustand store
+        useAuthStore.getState().setProfile({
+          ...profile,
+          birthdate
+        });
+      }
+
+      // 2. Update Password if entered
+      if (password) {
+        if (password !== confirmPassword) {
+          throw new Error('Hasła nie są identyczne!');
+        }
+        if (password.length < 6) {
+          throw new Error('Hasło musi mieć co najmniej 6 znaków!');
+        }
+        
+        const { error: authErr } = await supabase.auth.updateUser({
+          password: password
+        });
+
+        if (authErr) throw authErr;
+        
+        setPassword('');
+        setConfirmPassword('');
+      }
+
+      setAccountStatusMessage('Pomyślnie zaktualizowano dane konta!');
+      setAccountStatusType('success');
+    } catch (err: any) {
+      setAccountStatusMessage(err.message || 'Wystąpił błąd podczas zapisu.');
+      setAccountStatusType('error');
+    } finally {
+      setAccountUploading(false);
+    }
+  };
+
   if (!isOpen) return null;
 
   const handleAvatarFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -309,6 +369,71 @@ export const UserSettingsModal: React.FC<UserSettingsModalProps> = ({ isOpen, on
                     <p className="text-sm font-semibold text-white mt-1">
                       {profile?.is_admin ? 'Główny Administrator (Admin)' : 'Użytkownik (Zweryfikowany)'}
                     </p>
+                  </div>
+                </div>
+
+                {/* Edit Account Details & Password Form */}
+                <div className="p-5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] space-y-4">
+                  <h3 className="text-sm font-bold text-white uppercase tracking-wider">Edytuj dane i zabezpieczenia</h3>
+                  
+                  {accountStatusMessage && (
+                    <div className={`p-3 rounded-lg text-xs font-semibold flex items-center gap-2 border ${
+                      accountStatusType === 'success' 
+                        ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' 
+                        : 'bg-red-500/10 border-red-500/20 text-red-400'
+                    }`}>
+                      {accountStatusType === 'success' ? <Check size={14} /> : <X size={14} />}
+                      <span>{accountStatusMessage}</span>
+                    </div>
+                  )}
+
+                  <div className="space-y-3.5">
+                    {/* Birthdate Selector */}
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Data urodzenia</label>
+                      <input
+                        type="date"
+                        value={birthdate}
+                        onChange={(e) => setBirthdate(e.target.value)}
+                        className="w-full rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] px-3.5 py-2 text-sm text-white outline-none focus:border-[var(--accent)] transition"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      {/* Password Input */}
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Nowe hasło</label>
+                        <input
+                          type="password"
+                          placeholder="Wpisz nowe hasło..."
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className="w-full rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] px-3.5 py-2 text-sm text-white outline-none focus:border-[var(--accent)] transition"
+                        />
+                      </div>
+
+                      {/* Confirm Password Input */}
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Potwierdź nowe hasło</label>
+                        <input
+                          type="password"
+                          placeholder="Powtórz hasło..."
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          className="w-full rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] px-3.5 py-2 text-sm text-white outline-none focus:border-[var(--accent)] transition"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 flex justify-end">
+                    <button
+                      onClick={handleSaveAccount}
+                      disabled={accountUploading}
+                      className="rounded-lg bg-[var(--accent)] hover:bg-[var(--accent-hover)] px-5 py-2.5 text-xs font-bold text-white transition disabled:opacity-50"
+                    >
+                      {accountUploading ? 'Zapisywanie...' : 'Zapisz zmiany konta'}
+                    </button>
                   </div>
                 </div>
               </div>
