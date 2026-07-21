@@ -316,7 +316,7 @@ create or replace trigger on_auth_user_updated
     execute procedure public.handle_update_user();
 
 -- Simple RLS Policies (allows authenticated users full read/write for now, to be locked down per server permissions in later migrations)
-create policy "Allow read access to profiles for all authenticated" on public.profiles for select to authenticated using (true);
+create policy "Allow read access to profiles for all" on public.profiles for select using (true);
 create policy "Allow update access to own profile" on public.profiles for update to authenticated using (auth.uid() = id);
 
 create policy "Allow read access to servers for members" on public.servers for select to authenticated using (

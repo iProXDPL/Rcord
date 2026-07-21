@@ -96,10 +96,27 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const { data: { session } } = await supabase.auth.getSession();
     let profile: Profile | null = null;
     if (session?.user) {
-      const { data } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
-      if (!data) {
-        // Stale session (DB reset) -> force logout
-        await supabase.auth.signOut();
+      try {
+        const { data, error } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
+        if (error || !data) {
+          // Force clear Supabase keys from localStorage to prevent infinity loops
+          for (const key in localStorage) {
+            if (key.startsWith('sb-') && key.endsWith('-auth-token')) {
+              localStorage.removeItem(key);
+            }
+          }
+          await supabase.auth.signOut();
+          set({
+            session: null,
+            user: null,
+            profile: null,
+            initialized: true
+          });
+          return () => {};
+        }
+        profile = data;
+      } catch (e) {
+        // Fallback for network issues
         set({
           session: null,
           user: null,
@@ -108,7 +125,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         });
         return () => {};
       }
-      profile = data;
     }
 
     set({
@@ -124,7 +140,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         set({
           session: currentSession,
           user: currentSession.user,
-          profile: data,
+          profile: data || null,
           initialized: true
         });
       } else {
