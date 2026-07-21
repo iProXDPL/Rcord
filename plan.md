@@ -124,6 +124,7 @@ graph TD
     - **Inne linki (OpenGraph)**: Natywny kod Rust w Tauri pobiera metadane strony (tytuł, opis, miniatura), omijając zabezpieczenia CORS w przeglądarce, i przesyła je do frontendu React w celu wyświetlenia ramki podglądu.
   - **Przesyłanie plików i programów (załączniki)**: 
     - Pliki (dokumenty, archiwum `.zip`, instalatory `.exe`/`.deb` itp.) o rozmiarze do **50 MB** są przesyłane bezpośrednio do **Supabase Storage** (bucket `attachments`).
+    - Zabezpieczenie limitu 50 MB oraz uprawnienia są egzekwowane bezpośrednio na serwerze Supabase za pomocą polityk SQL RLS, co uniemożliwia obejście limitów.
     - Na czacie wyświetla się elegancka karta załącznika pokazująca nazwę pliku, rozmiar, ikonę rozszerzenia oraz przycisk do pobrania. Obrazy i pliki wideo mają automatyczny podgląd (preview) wewnątrz czatu.
   - **Wyszukiwarka wiadomości z filtrami**:
     - Wyszukiwanie pełnotekstowe (Full Text Search) zintegrowane w bazie PostgreSQL (za pomocą kolumny `fts_search_vector` i szybkiego indeksu GIN), co pozwala na błyskawiczne przeszukiwanie historii czatu.

@@ -539,6 +539,44 @@ create trigger tr_check_sound_limit
     for each row execute procedure public.check_sound_limit();
 
 
+-- 19. Supabase Storage Buckets and Security Policies
+insert into storage.buckets (id, name, public)
+values ('attachments', 'attachments', true)
+on conflict (id) do nothing;
+
+insert into storage.buckets (id, name, public)
+values ('emojis', 'emojis', true)
+on conflict (id) do nothing;
+
+insert into storage.buckets (id, name, public)
+values ('soundboard', 'soundboard', true)
+on conflict (id) do nothing;
+
+-- Policies for attachments bucket (max 50MB)
+create policy "Allow read attachments for all" on storage.objects for select to authenticated using (bucket_id = 'attachments');
+create policy "Allow insert attachments max 50MB" on storage.objects for insert to authenticated with check (
+    bucket_id = 'attachments' and 
+    (metadata->>'size')::int <= 52428800
+);
+
+-- Policies for emojis bucket (max 256KB, images only)
+create policy "Allow read emojis for all" on storage.objects for select to authenticated using (bucket_id = 'emojis');
+create policy "Allow insert emojis max 256KB images" on storage.objects for insert to authenticated with check (
+    bucket_id = 'emojis' and 
+    (metadata->>'size')::int <= 262144 and
+    metadata->>'mimetype' ~ 'image/.*'
+);
+
+-- Policies for soundboard bucket (max 500KB, audio only)
+create policy "Allow read soundboard for all" on storage.objects for select to authenticated using (bucket_id = 'soundboard');
+create policy "Allow insert soundboard max 500KB audio" on storage.objects for insert to authenticated with check (
+    bucket_id = 'soundboard' and 
+    (metadata->>'size')::int <= 512000 and
+    metadata->>'mimetype' ~ 'audio/.*'
+);
+
+
+
 
 
 
