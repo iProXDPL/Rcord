@@ -136,6 +136,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ loading: true });
     await supabase.auth.signOut();
     set({ user: null, profile: null, session: null, loading: false });
+    if (window.location.hash || window.location.href.includes('#')) {
+      window.history.replaceState(null, '', window.location.pathname);
+    }
   },
   initialize: async () => {
     if (get().initialized) return () => {};
@@ -178,6 +181,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       syncExternalAvatar(session.user.id, profile.avatar_url as string);
     }
 
+    if (session?.user && (window.location.hash || window.location.href.includes('#'))) {
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+
     set({
       session,
       user: session?.user ?? null,
@@ -190,6 +197,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         const { data } = await supabase.from('profiles').select('*').eq('id', currentSession.user.id).single();
         if (data && isExternalUrl(data.avatar_url)) {
           syncExternalAvatar(currentSession.user.id, data.avatar_url as string);
+        }
+        if (window.location.hash || window.location.href.includes('#')) {
+          window.history.replaceState(null, '', window.location.pathname);
         }
         set({
           session: currentSession,

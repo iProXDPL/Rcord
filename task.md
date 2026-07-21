@@ -18,11 +18,11 @@
 - `[x]` Ekrany logowania i rejestracji (UI w React)
   - `[x]` Formularz Logowania (styl glassmorphic, walidacja email i hasła)
   - `[x]` Formularz Rejestracji (pole nazwy, email, hasło, data urodzenia, obsługa walidacji wieku)
-- `[/]` Wdrożenie Magazynu plików (Storage) i Profilu Użytkownika
+- `[x]` Wdrożenie Magazynu plików (Storage) i Profilu Użytkownika
   - `[x]` Konfiguracja wiader `avatars` oraz `banners` z politykami RLS w bazie danych
-  - `[ ]` Automatyczne pobieranie i zapisywanie zewnętrznych awatarów Google na nasz serwer storage przy pierwszym logowaniu
-  - `[ ]` Wgrywanie plików awataru i baneru z lokalnego komputera w oknie ustawień (zamiast wklejania linków)
-  - `[ ]` Przebudowanie okna Ustawień na estetyczny wyskakujący dialog (modal popup) z wyszukiwarką, kategoriami i przewijaniem zawartości
+  - `[x]` Automatyczne pobieranie i zapisywanie zewnętrznych awatarów Google na nasz serwer storage przy pierwszym logowaniu
+  - `[x]` Wgrywanie plików awataru i baneru z lokalnego komputera w oknie ustawień (zamiast wklejania linków)
+  - `[x]` Przebudowanie okna Ustawień na estetyczny wyskakujący dialog (modal popup) z wyszukiwarką, kategoriami i przewijaniem zawartości
 - `[x]` Dostosowanie CSS i motywów (`index.css` i Tailwind)
   - `[x]` Zmienne CSS dla motywów (ciemny, jasny, cyberpunk)
   - `[x]` Style dla niestandardowych suwaków (scrollbars) i efektów neonowych
