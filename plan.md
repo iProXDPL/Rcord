@@ -98,8 +98,8 @@ Interfejs użytkownika będzie wzorowany na sprawdzonym i ergonomicznym układzi
    - **Niezależne wątki (Multitasking)**: Użytkownik może przebywać na kanale głosowym i jednocześnie przeglądać oraz pisać na dowolnym kanale tekstowym (lub przeglądać sklep/znajomych) bez rozłączania rozmowy.
 3. **Panel Główny (Center Active View)**:
    - Wyświetla zawartość wybranego kanału tekstowego (okno czatu z historią wiadomości, spoilerami, rich embedami), widok pokoju głosowego (siatka uczestników z wideo/ekranem) lub widok domowy (sklep, znajomi itp.).
-4. **Pasek Członków Serwera (Rightmost Sidebar)**:
-   - Wyświetla listę wszystkich członków przypisanych do całego aktywnego serwera (a nie poszczególnych kanałów czatowych, co upraszcza interfejs i jasno pokazuje skład serwera), pogrupowanych według ról lub statusu obecności (online, idle, dnd, offline) wraz z ich statusami aktywności w grach (Rich Presence).
+4. **Pasek Członków (Rightmost Sidebar)**:
+   - Wyświetla listę członków serwera, którzy mają uprawnienia do wyświetlania obecnie wybranego kanału (filtrowanie na podstawie ról i uprawnień kanału), dzięki czemu użytkownicy czatu dokładnie wiedzą, kto ma dostęp do treści i widzi ich wiadomości. Członkowie są pogrupowani według ról lub statusu obecności (online, idle, dnd, offline) wraz z ich statusami aktywności w grach (Rich Presence).
 
 ---
 
