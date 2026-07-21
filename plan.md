@@ -33,6 +33,35 @@ Zgodnie z wymaganiami, aplikacja będzie korzystać z następujących technologi
 
 ---
 
+## 📂 Struktura Folderów Projektu
+
+Projekt jest podzielony na czyste podkatalogi rozdzielające poszczególne warstwy aplikacji:
+
+```text
+/Rcord (Katalog Główny)
+├── /frontend               # Aplikacja React + TypeScript + Tailwind CSS (Vite)
+│   ├── /src                # Kod interfejsu (komponenty shadcn, Zustand, ekrany)
+│   ├── index.html
+│   ├── package.json
+│   ├── tailwind.config.js
+│   └── vite.config.ts
+├── /backend                # Kod natywny Tauri v2 w języku Rust (Rust Core)
+│   ├── /src                # Kod Rust (lib.rs, main.rs, global hotkeys, audio)
+│   ├── Cargo.toml
+│   └── tauri.conf.json     # Konfiguracja Tauri (powiązana z katalogiem frontend)
+├── /database               # Konfiguracja lokalnej bazy danych Supabase (Docker)
+│   ├── config.toml
+│   └── /migrations         # Skrypty migracji PostgreSQL (initial_schema.sql)
+├── /bot-example            # Szablon przykładowego bota w Node.js/TypeScript
+├── docker-compose.yml      # Kontenery deweloperskie (LiveKit SFU)
+├── livekit.yaml            # Konfiguracja LiveKit
+├── LICENSE                 # Licencja MIT
+├── plan.md                 # Plan projektu i architektura (ten plik)
+└── README.md               # Dokumentacja techniczna dla deweloperów
+```
+
+---
+
 ## 🏗️ Architektura Systemu
 
 ```mermaid
