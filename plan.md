@@ -116,7 +116,7 @@ graph TD
   - **Pełne wsparcie dla Markdown (MD)**: renderowanie pogrubień, kursywy, list, cytatów oraz bloków kodu z kolorowaniem składni (np. dla języków programowania).
   - **Automatyczne Embedy (Rich Embeds)**:
     - **YouTube**: Automatyczne renderowanie odtwarzacza wideo (iframe) pod wiadomością zawierającą link.
-    - **Twitter/X**: Podgląd tweetów i mediów.
+    - **Twitter/X**: Podgląd tweetów i mediów (w tym wbudowany odtwarzacz wideo HTML5, który pozwala odtwarzać filmy z tweetów bezpośrednio w oknie czatu).
     - **Obrazy i Gify**: Bezpośrednie wyświetlanie obrazków (png, jpg, webp, gif) przesłanych jako linki.
     - **Inne linki (OpenGraph)**: Natywny kod Rust w Tauri pobiera metadane strony (tytuł, opis, miniatura), omijając zabezpieczenia CORS w przeglądarce, i przesyła je do frontendu React w celu wyświetlenia ramki podglądu.
   - **Przesyłanie plików i programów (załączniki)**: 
