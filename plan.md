@@ -101,7 +101,15 @@ graph TD
   - Wysyłanie odpowiedzi przez REST API i obsługę komend (np. Slash Commands).
   - **Logikę Bota Muzycznego**: Pokazanie, jak bot dołącza do pokoju głosowego jako wirtualny uczestnik przy użyciu **LiveKit SDK** i streamuje dźwięk (np. plik audio lub pobierany z YouTube) bezpośrednio jako ścieżkę audio (mikrofon) do pokoju głosowego. Użytkownicy sterują nim za pomocą komend czatu (np. `/play`, `/skip`).
 
-### 3. Nakładka (Overlay) i wersja Mobilna
+### 3. System Webhooków
+- **Webhooki Przychodzące (Incoming Webhooks)**: Umożliwiają zewnętrznym aplikacjom (np. GitHub, GitLab, Jira) wysyłanie wiadomości oraz kart embedów do określonych kanałów tekstowych w Rcord przy użyciu prostego żądania HTTP POST z ciałem JSON (obsługiwane przez Supabase Edge Functions).
+- **Webhooki Wychodzące (Outgoing Webhooks)**: Pozwalają subskrybować zdarzenia serwera i wysyłać powiadomienia (HTTP POST z ładunkiem JSON) na zewnętrzne adresy URL. Wspieramy standardowy zestaw zdarzeń wyzwalających:
+  - `message_created`: przy wysłaniu nowej wiadomości na określonym kanale.
+  - `member_joined`: przy dołączeniu nowego członka do serwera.
+  - `member_left`: przy opuszczeniu serwera przez członka.
+
+
+### 4. Nakładka (Overlay) i wersja Mobilna
 - **Nakładka (Overlay)** będzie działać **tylko na komputerach stacjonarnych (Windows, Linux)**.
 - Na **Androidzie** oraz w głównym oknie desktopowym skupiamy się na standardowym, dopracowanym interfejsie czatu.
 - **Funkcje Okna Czatu**:
@@ -118,13 +126,13 @@ graph TD
     - Wyszukiwanie pełnotekstowe (Full Text Search) zintegrowane w bazie PostgreSQL (za pomocą kolumny `fts_search_vector` i szybkiego indeksu GIN), co pozwala na błyskawiczne przeszukiwanie historii czatu.
     - Obsługa filtrów wyszukiwania (np. `has:link` dla wiadomości zawierających linki URL, `has:image` dla wiadomości z obrazami, oraz `has:file` dla wiadomości z plikami załączników).
 
-### 4. Tymczasowe Kanały i Uprawnienia
+### 5. Tymczasowe Kanały i Uprawnienia
 - System uprawnień na serwerach będzie kontrolować tworzenie kanałów.
 - **Automatyczne kanały tymczasowe (Auto-cleanup)**: Użytkownicy z uprawnieniami mogą tworzyć kanały tymczasowe (`is_temporary = true`). Ich cykl życia jest w pełni zautomatyzowany po stronie bazy danych:
   - Gdy użytkownik dołącza do kanału głosowego, jego stan jest zapisywany w tabeli `voice_states`.
   - Gdy ostatni użytkownik opuści kanał (liczba rekordów w `voice_states` dla tego `channel_id` spadnie do 0), trigger PostgreSQL (`on_voice_state_left`) automatycznie usunie ten kanał z tabeli `channels`, odciążając klienty.
 
-### 5. Backend i Docker
+### 6. Backend i Docker
 - **Docker jest zainstalowany i skonfigurowany.**
 - Wykorzystamy oficjalny **Supabase CLI** do lokalnego uruchomienia bazy w Dockerze.
 - Dodatkowo, w folderze głównym projektu stworzymy `docker-compose.yml` do uruchomienia lokalnego serwera **LiveKit SFU** na porcie `7800` (z kluczem/sekretem deweloperskim), co ułatwi lokalne testowanie rozmów wideo i audio bez zależności od chmury.
