@@ -113,10 +113,12 @@ Na start wdrożymy trzy gry wbudowane (React + Tailwind):
 - **Snake**
 Punkty będą naliczane za wyniki (zwycięstwo daje więcej punktów, przegrana mniej).
 
-### 3. Gry w tle (System Anty-AFK)
+### 3. Gry w tle (System Anty-AFK, Skanowanie i Status aktywności)
 Tauri w Rust będzie monitorować uruchomione procesy gier na podstawie **statycznej, wbudowanej listy najpopularniejszych gier** (np. Minecraft, Counter-Strike 2, League of Legends, GTA V, Fortnite, Valorant, Cyberpunk 2077).
-- Naliczanie punktów nastąpi wyłącznie wtedy, gdy proces gry jest wykryty oraz okno gry jest **aktywne (w focusie)**.
-- Wykorzystamy wbudowane zabezpieczenie anty-AFK (sprawdzanie aktywności okna i brak bezczynności systemowej), aby zapobiec farmowaniu punktów w tle przy zminimalizowanej grze.
+- **Skanowanie launcherów (Steam/Epic Games)**: Przy uruchomieniu aplikacji Tauri skanuje systemowe ścieżki bibliotek (np. pliki manifestu `.acf` Steama oraz Epic Games) w celu automatycznego wykrycia, które z popularnych gier są zainstalowane na komputerze użytkownika.
+- **Konfiguracja i prywatność w ustawieniach**: Wykryte gry zostaną wyświetlone w specjalnej sekcji ustawień gier, gdzie użytkownik może włączyć/wyłączyć wykrywanie poszczególnych gier oraz zdecydować o udostępnianiu statusu.
+- **Status aktywności (Rich Presence)**: Kiedy gra z listy jest uruchomiona i aktywna, jej status (np. „Gra w Path of Exile od 45 min”) jest przesyłany w czasie rzeczywistym przez Supabase Realtime do członków serwera i znajomych (wyświetlany na liście użytkowników i w oknie profilu).
+- **Zabezpieczenie anty-AFK**: Punkty są naliczane wyłącznie wtedy, gdy gra jest oknem **aktywnym (w focusie)**, a użytkownik wykazuje aktywność systemową (brak bezczynności).
 
 ### 4. Estetyka, Motywy i Sklep
 - **Na start**: Czysty **Jasny (Light)** oraz **Ciemny (Dark)** motyw z dwoma akcentami kolorystycznymi do wyboru przez użytkownika.
