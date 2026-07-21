@@ -13,6 +13,7 @@ create table public.profiles (
     current_accent text default 'purple',
     current_border_url text,
     is_admin boolean default false not null,
+    is_bot boolean default false not null,
     birthdate date,
     server_layout jsonb default '[]'::jsonb not null,
     created_at timestamp with time zone default timezone('utc'::text, now()) not null
@@ -260,11 +261,13 @@ begin
         end if;
     end loop;
 
-    insert into public.profiles (id, username, avatar_url)
+    insert into public.profiles (id, username, avatar_url, birthdate, is_bot)
     values (
         new.id,
         v_final_username,
-        new.raw_user_meta_data->>'avatar_url'
+        new.raw_user_meta_data->>'avatar_url',
+        (new.raw_user_meta_data->>'birthdate')::date,
+        coalesce((new.raw_user_meta_data->>'is_bot')::boolean, false)
     );
     return new;
 end;

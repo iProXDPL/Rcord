@@ -178,9 +178,15 @@ Interfejs użytkownika będzie wzorowany na sprawdzonym i ergonomicznym układzi
     - **Pliki kodu / programu (np. `test.py`, `app.js`, `.json`)**: Automatycznie renderują małe, scrollowalne okno podglądu z kolorowaniem składni dla danego języka programowania oraz ikonką pobierania pliku.
     - **Pliki tekstowe (`.txt`)**: Renderują podobne, małe, scrollowalne okienko z podglądem zawartości, ale bez kolorowania (uproszczony widok tekstowy), z ikonką pobierania pliku.
     - Obrazy i pliki wideo mają automatyczny pełny podgląd (preview) wewnątrz czatu.
-  - **Wyszukiwarka wiadomości z filtrami**:
+  - **Wyszukiwarka wiadomości z zaawansowanymi filtrami**:
     - Wyszukiwanie pełnotekstowe (Full Text Search) zintegrowane w bazie PostgreSQL (za pomocą kolumny `fts_search_vector` i szybkiego indeksu GIN), co pozwala na błyskawiczne przeszukiwanie historii czatu.
-    - Obsługa filtrów wyszukiwania (np. `has:link` dla wiadomości zawierających linki URL, `has:image` dla wiadomości z obrazami, oraz `has:file` dla wiadomości z plikami załączników).
+    - Obsługa filtrów wyszukiwania ułatwiających znajdowanie konkretnych treści:
+      - `has:link` – wiadomości zawierające linki URL.
+      - `has:image` – wiadomości zawierające obrazy (np. przesłane jako załączniki lub linki z imgur).
+      - `has:file` – wiadomości z plikami załączników (np. pliki zip, exe).
+      - `has:mention` lub `mentions:me` / `mentions:<username>` – wiadomości zawierające wzmianki (ogólne, o sobie lub o konkretnym użytkowniku).
+      - `from:me` lub `from:<username>` – wiadomości wysłane przez samego siebie lub przez wskazanego użytkownika.
+      - `before:<data>` / `after:<data>` / `during:<data>` – wiadomości wysłane przed określoną datą, po niej lub w konkretnym dniu (format RRRR-MM-DD).
   - **Reakcje emoji pod wiadomościami**: Kliknięcie ikony reakcji otwiera panel emotek (w tym custom emotki serwera). Każda reakcja wyświetla się jako ikonka z licznikiem osób, które ją dodały (tabela `message_reactions`).
   - **Odpowiadanie na wiadomości (Reply)**: Kliknięcie "Odpowiedz" na wiadomość tworzy odpowiedź z cytowaniem oryginału (podgląd wiadomości nadrzędnej nad Twoją odpowiedzią, klikalny).
   - **Przypinanie wiadomości (Pin)**: Użytkownicy z uprawnieniami mogą przypiąć ważne wiadomości do kanału. Przypięte wiadomości są dostępne w panelu "Przypięte" w nagłówku kanału.
