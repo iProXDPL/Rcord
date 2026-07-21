@@ -21,6 +21,7 @@
 - `[x]` Dostosowanie CSS i motywów (`index.css` i Tailwind)
   - `[x]` Zmienne CSS dla motywów (ciemny, jasny, cyberpunk)
   - `[x]` Style dla niestandardowych suwaków (scrollbars) i efektów neonowych
+  - `[ ]` Opcjonalnie: Badanie i integracja systemu komponentów Astryx (Design System od Meta) dla UI i obsługi przez agentów AI
 - `[x]` Podstawowy 4-kolumnowy Layout Komunikatora (`MainLayout.tsx`)
   - `[x]` Kolumna 1: ServerSidebar (przycisk Home + lista serwerów z Drag & Drop)
   - `[x]` Kolumna 2: ChannelSidebar (nagłówek serwera, lista wydarzeń, kategorie/kanały, dolna karta profilu)
