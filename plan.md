@@ -83,6 +83,27 @@ graph TD
 
 ---
 
+## 🎨 Układ Graficzny i Struktura Interfejsu (Layout)
+
+Interfejs użytkownika będzie wzorowany na sprawdzonym i ergonomicznym układzie typu Discord, podzielonym na pionowe panele (od lewej do prawej):
+
+1. **Pasek Nawigacji i Serwerów (Leftmost Sidebar)**:
+   - Górny przycisk **Home**: Prowadzi do widoku prywatnego (prywatne wiadomości DMs, lista znajomych, sklep z kosmetykami, ekwipunek użytkownika).
+   - Lista ikon dołączonych serwerów (gildii).
+   - Wsparcie dla **Drag and Drop** do zmiany kolejności ikon serwerów oraz **tworzenia folderów serwerów** (przeciągnięcie ikony na ikonę tworzy folder z możliwością zwijania/rozwijania). Stan układu serwerów użytkownika jest zapisywany w bazie danych (`profiles.server_layout`).
+2. **Pasek Kanałów i Kategorii (Middle-Left Sidebar)**:
+   - Wyświetla kategorie i kanały (tekstowe oraz głosowe) aktywnego serwera (lub listę kontaktów DMs w widoku Home).
+   - Dolna karta profilu użytkownika: Awatar (ze wsparciem GIF), nazwa użytkownika z tagiem, oraz przyciski kontrolne: wyciszenie mikrofonu (Mute) i wyciszenie dźwięku (Deafen).
+   - Dostęp do panelu Soundboardu po dołączeniu do kanału głosowego.
+   - **Niezależne wątki (Multitasking)**: Użytkownik może przebywać na kanale głosowym i jednocześnie przeglądać oraz pisać na dowolnym kanale tekstowym (lub przeglądać sklep/znajomych) bez rozłączania rozmowy.
+3. **Panel Główny (Center Active View)**:
+   - Wyświetla zawartość wybranego kanału tekstowego (okno czatu z historią wiadomości, spoilerami, rich embedami), widok pokoju głosowego (siatka uczestników z wideo/ekranem) lub widok domowy (sklep, znajomi itp.).
+4. **Pasek Członków Serwera (Rightmost Sidebar)**:
+   - Wyświetla listę użytkowników przypisanych do aktywnego serwera, pogrupowanych według ról lub statusu obecności (online, idle, dnd, offline) wraz z ich statusem aktywności w grach (Rich Presence).
+
+---
+
+
 ## 🎯 Podjęte Decyzje Projektowe
 
 ### 1. Centrum Gier i naliczanie punktów

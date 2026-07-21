@@ -14,6 +14,7 @@ create table public.profiles (
     current_border_url text,
     is_admin boolean default false not null,
     birthdate date,
+    server_layout jsonb default '[]'::jsonb not null,
     created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
