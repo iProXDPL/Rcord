@@ -128,7 +128,10 @@ Serwery (gildie) i kontakty będą posiadały:
 - **Kanały i Kategorie (Grupy kanałów)** na serwerach.
 - **Rozmowy Prywatne (DMs)** oraz **Grupowe Rozmowy Prywatne (Group DMs)**: Komunikacja poza serwerami, zintegrowana w tych samych tabelach wiadomości dzięki relacji z `channel_members` (kiedy `server_id` jest puste).
 - **Lista Znajomych (Friends List)** i system relacji: wysyłanie zaproszeń do znajomych przy użyciu pełnego tagu (np. `friend#1122`), statusy: znajomi, zablokowani, oczekujące.
-- **Uprawnienia i Role** dla użytkowników na serwerach.
+- **Zaawansowane Uprawnienia i Role**: Użytkownicy mogą posiadać wiele ról (np. Administrator, Moderator, Gracz), z których każda ma określony zestaw uprawnień. Kategorie kanałów mogą nadpisywać uprawnienia ról (overrides).
+- **Widoczność i blokada pisania w kanałach (Read-Only)**:
+  - Kanały mogą być prywatne (wyświetlane tylko dla określonych ról posiadających uprawnienie `view_channel` w danej kategorii).
+  - Kanały mogą być tylko do odczytu (blokada pisania dla standardowych użytkowników poprzez wyłączenie uprawnienia `send_messages` dla danej roli, przy zachowaniu uprawnień dla Administratorów/Moderatorów – idealne pod kanały typu `#regulamin`, `#ogloszenia`).
 - **Zaproszenia (Invite Links)**: Generowanie unikalnych linków do dołączania do serwerów. Oprócz tradycyjnego wklejania kodu w oknie dialogowym, Tauri zarejestruje systemowy protokół `rcord://` (np. `rcord://join/kod`). Kliknięcie takiego linku na stronie internetowej automatycznie uruchomi aplikację Rcord i dołączy gracza do serwera.
 - **Wyszukiwarkę serwerów publicznych**: Serwery oznaczone jako `is_public` będą widoczne dla wszystkich użytkowników w sekcji odkrywania.
 

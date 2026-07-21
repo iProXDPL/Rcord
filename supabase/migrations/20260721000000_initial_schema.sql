@@ -41,6 +41,29 @@ create table public.server_members (
 
 alter table public.server_members enable row level security;
 
+-- Server Roles
+create table public.server_roles (
+    id uuid primary key default gen_random_uuid(),
+    server_id uuid references public.servers(id) on delete cascade not null,
+    name text not null,
+    color text default '#99aab5' not null,
+    permissions jsonb default '{}'::jsonb not null,
+    position integer default 0 not null,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+alter table public.server_roles enable row level security;
+
+-- Member Roles mapping
+create table public.member_roles (
+    server_id uuid references public.servers(id) on delete cascade not null,
+    user_id uuid references public.profiles(id) on delete cascade not null,
+    role_id uuid references public.server_roles(id) on delete cascade not null,
+    primary key (server_id, user_id, role_id)
+);
+
+alter table public.member_roles enable row level security;
+
 -- 4. Channel Categories
 create table public.channel_categories (
     id uuid primary key default gen_random_uuid(),
@@ -50,6 +73,17 @@ create table public.channel_categories (
 );
 
 alter table public.channel_categories enable row level security;
+
+-- Category Permissions mapping (Overrides per category)
+create table public.category_permissions (
+    category_id uuid references public.channel_categories(id) on delete cascade not null,
+    role_id uuid references public.server_roles(id) on delete cascade, -- null oznacza @everyone
+    allow jsonb default '{}'::jsonb not null,
+    deny jsonb default '{}'::jsonb not null,
+    primary key (category_id, role_id)
+);
+
+alter table public.category_permissions enable row level security;
 
 -- 5. Channels
 create table public.channels (
@@ -274,6 +308,16 @@ create policy "Allow delete channel members" on public.channel_members for delet
 
 create policy "Allow select own relationships" on public.relationships for select to authenticated using (user_id = auth.uid());
 create policy "Allow insert/update/delete own relationships" on public.relationships for all to authenticated using (user_id = auth.uid());
+
+-- RLS Policies for Roles & Category Permissions
+create policy "Allow select server roles" on public.server_roles for select to authenticated using (true);
+create policy "Allow modify server roles" on public.server_roles for all to authenticated using (true);
+
+create policy "Allow select member roles" on public.member_roles for select to authenticated using (true);
+create policy "Allow modify member roles" on public.member_roles for all to authenticated using (true);
+
+create policy "Allow select category permissions" on public.category_permissions for select to authenticated using (true);
+create policy "Allow modify category permissions" on public.category_permissions for all to authenticated using (true);
 
 -- Secure function to change username and tag (e.g. name#1234 or name#PSK)
 create or replace function public.change_username_and_tag(
