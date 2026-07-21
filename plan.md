@@ -189,7 +189,12 @@ Interfejs użytkownika będzie wzorowany na sprawdzonym i ergonomicznym układzi
   - **Discord Auth**
 - **Generator Nazw z Tagiem (`name#1234`)**: Przy rejestracji system automatycznie przydziela 4-cyfrowy unikalny identyfikator (tag) oddzielony znakiem `#` (np. `ipro#9482`). Pozwala to na powtarzanie się samych nazw użytkowników, zachowując unikalność w bazie, dokładnie tak jak na Discordzie.
 - **Możliwość Zmiany Tagu**: Użytkownik może ręcznie zmienić swój tag na własny (np. literowy `#PSK` lub `#GAME`), pod warunkiem, że kombinacja `nowa_nazwa#nowy_tag` jest wolna w bazie. Tag musi być alfanumeryczny i mieć długość **od 2 do 5 znaków**.
-- **Śledzenie Statusu Aktywności (Supabase Realtime Presence)**: Do rozsyłania statusów obecności (Online, Idle - Zaraz wracam, DND - Nie przeszkadzać, Offline) wykorzystamy wbudowany mechanizm **Supabase Presence** działający w pamięci RAM serwera Realtime. Pozwala to na śledzenie obecności w czasie rzeczywistym i aktualizację listy znajomych oraz członków serwera bez generowania jakichkolwiek zapisów do bazy danych.
+- **Śledzenie Statusu Aktywności (Supabase Realtime Presence)**: Do rozsyłania statusów obecności wykorzystamy wbudowany mechanizm **Supabase Presence** działający w pamięci RAM serwera Realtime. Pozwala to na śledzenie obecności w czasie rzeczywistym bez generowania zapisów do bazy danych. Dostępne statusy:
+  - **Online** – ustawiany automatycznie po zalogowaniu.
+  - **Idle (Zaraz wracam)** – ustawiany automatycznie po kilku minutach bezczynności systemowej (brak ruchu myszy/klawiatury, wykrywane przez Tauri).
+  - **DND (Nie przeszkadzać)** – ręczny, blokuje wszystkie powiadomienia dźwiękowe i popupy.
+  - **Niewidoczny (Invisible)** – ręczny, użytkownik wygląda jak offline dla innych, ale nadal może korzystać z aplikacji i czytać wiadomości.
+  - Użytkownik może ręcznie wybrać dowolny status z menu w karcie profilu (dolny panel paska kanałów).
 
 ### 2. Centrum Gier (Gry wbudowane)
 Na start wdrożymy trzy gry wbudowane (React + Tailwind):
