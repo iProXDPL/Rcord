@@ -3,15 +3,14 @@ import { ServerSidebar } from './ServerSidebar';
 import { ChannelSidebar } from './ChannelSidebar';
 import { ActiveView } from './ActiveView';
 import { MemberSidebar } from './MemberSidebar';
+import { UserSettingsModal } from './UserSettingsModal';
 import { useServerStore } from '../../stores/serverStore';
 import { useChannelStore } from '../../stores/channelStore';
-import { useAuthStore } from '../../stores/authStore';
-import { X, Globe, Lock, Shield } from 'lucide-react';
+import { Globe, Lock, X } from 'lucide-react';
 
 export const MainLayout: React.FC = () => {
   const { fetchServers, createServer } = useServerStore();
   const { createChannel } = useChannelStore();
-  const { logout, profile } = useAuthStore();
 
   // Collapsible Sidebars State
   const [isChannelSidebarCollapsed, setIsChannelSidebarCollapsed] = useState(false);
@@ -74,7 +73,6 @@ export const MainLayout: React.FC = () => {
     <div className="flex h-screen w-screen overflow-hidden bg-[var(--bg-primary)]">
       <ServerSidebar
         onAddServerClick={() => setIsAddServerOpen(true)}
-        onUserSettingsClick={() => setIsUserSettingsOpen(true)}
       />
 
       {/* Column 2: Channel Sidebar (Collapsible) */}
@@ -253,65 +251,10 @@ export const MainLayout: React.FC = () => {
       )}
 
       {/* USER SETTINGS MODAL */}
-      {isUserSettingsOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="w-full max-w-lg rounded-xl border border-zinc-800 bg-[#313338] p-6 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-zinc-800 pb-3 select-none">
-              <div className="flex items-center gap-2">
-                <Shield size={20} className="text-indigo-400" />
-                <h3 className="text-lg font-bold text-white font-heading">Ustawienia Konta</h3>
-              </div>
-              <button onClick={() => setIsUserSettingsOpen(false)} className="text-zinc-400 hover:text-white">
-                <X size={20} />
-              </button>
-            </div>
-            <div className="mt-4 space-y-6">
-              <div className="flex items-center gap-4 p-4 rounded-xl bg-zinc-950/20 border border-zinc-800/40 select-none">
-                <div className="h-16 w-16 rounded-full bg-zinc-700 flex items-center justify-center text-2xl font-bold uppercase text-white font-heading border border-zinc-600/30">
-                  {profile?.username[0]}
-                </div>
-                <div>
-                  <h4 className="font-bold text-white font-heading text-lg">{profile?.username}</h4>
-                  <p className="text-xs text-zinc-500 mt-0.5">Nazwa konta wraz z tagiem</p>
-                  <p className="text-xs text-zinc-500">Zgromadzone punkty gier: {profile?.points ?? 0}</p>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-400 select-none">Opcje aplikacji</h4>
-                <div className="grid grid-cols-2 gap-2">
-                  <button className="flex flex-col items-start gap-1 p-3 rounded-lg border border-zinc-800 bg-zinc-950/20 text-left hover:border-zinc-700 select-none">
-                    <span className="text-xs text-zinc-500 uppercase tracking-wide">Motyw wizualny</span>
-                    <span className="text-sm font-semibold text-white">Ciemny (Domyślny)</span>
-                  </button>
-                  <button className="flex flex-col items-start gap-1 p-3 rounded-lg border border-zinc-800 bg-zinc-950/20 text-left hover:border-zinc-700 select-none">
-                    <span className="text-xs text-zinc-500 uppercase tracking-wide">Skróty klawiszowe</span>
-                    <span className="text-sm font-semibold text-white">Konfiguruj klawisze</span>
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex justify-between items-center border-t border-zinc-800 pt-6 mt-6">
-                <button
-                  onClick={() => {
-                    logout();
-                    setIsUserSettingsOpen(false);
-                  }}
-                  className="rounded-lg bg-red-600/10 border border-red-500/20 hover:bg-red-600 px-4 py-2 text-sm font-semibold text-red-500 hover:text-white transition"
-                >
-                  Wyloguj się
-                </button>
-                <button
-                  onClick={() => setIsUserSettingsOpen(false)}
-                  className="rounded-lg bg-zinc-800 hover:bg-zinc-700 px-4 py-2 text-sm font-semibold text-white transition"
-                >
-                  Zamknij
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <UserSettingsModal
+        isOpen={isUserSettingsOpen}
+        onClose={() => setIsUserSettingsOpen(false)}
+      />
     </div>
   );
 };

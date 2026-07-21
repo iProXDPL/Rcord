@@ -154,7 +154,7 @@ export const ChannelSidebar: React.FC<ChannelSidebarProps> = ({
       </div>
 
       {/* User Footer Panel */}
-      <div className="flex h-[52px] items-center justify-between bg-[var(--bg-primary)] px-2 py-3 select-none border-t border-[var(--border-color)]">
+      <div className="flex h-[52px] items-center justify-between bg-[#0d0e13] px-2 py-3 select-none border-t border-[var(--border-color)]">
         <div className="flex items-center gap-2 min-w-0 max-w-[120px] cursor-pointer hover:bg-[var(--bg-active)]/30 p-1 rounded transition">
           <div className="relative shrink-0">
             <div className="h-8 w-8 rounded-full bg-zinc-700 overflow-hidden border border-zinc-600/30">

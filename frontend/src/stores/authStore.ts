@@ -97,6 +97,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     let profile: Profile | null = null;
     if (session?.user) {
       const { data } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
+      if (!data) {
+        // Stale session (DB reset) -> force logout
+        await supabase.auth.signOut();
+        set({
+          session: null,
+          user: null,
+          profile: null,
+          initialized: true
+        });
+        return () => {};
+      }
       profile = data;
     }
 
