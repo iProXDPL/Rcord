@@ -275,4 +275,48 @@ create policy "Allow delete channel members" on public.channel_members for delet
 create policy "Allow select own relationships" on public.relationships for select to authenticated using (user_id = auth.uid());
 create policy "Allow insert/update/delete own relationships" on public.relationships for all to authenticated using (user_id = auth.uid());
 
+-- Secure function to change username and tag (e.g. name#1234 or name#PSK)
+create or replace function public.change_username_and_tag(
+    p_user_id uuid,
+    p_new_base text,
+    p_new_tag text
+)
+returns void as $$
+declare
+    v_final_username text;
+    v_exists boolean;
+begin
+    -- 1. Check if the user is modifying their own profile
+    if p_user_id <> auth.uid() then
+        raise exception 'Brak uprawnień do zmiany nazwy innego użytkownika';
+    end if;
+
+    -- 2. Validate new base username length
+    if length(p_new_base) < 2 or length(p_new_base) > 15 then
+        raise exception 'Nazwa użytkownika musi mieć od 2 do 15 znaków';
+    end if;
+
+    -- 3. Validate new tag length and alphanumeric check (2 to 5 characters)
+    if not (p_new_tag ~* '^[a-z0-9]{2,5}$') then
+        raise exception 'Tag musi być alfanumeryczny i mieć od 2 do 5 znaków (np. PSK)';
+    end if;
+
+    -- 4. Construct final username (standardizing tag to uppercase for consistency)
+    v_final_username := p_new_base || '#' || upper(p_new_tag);
+
+    -- 5. Check if the username#tag combo is already taken
+    select exists (
+        select 1 from public.profiles where username = v_final_username and id <> p_user_id
+    ) into v_exists;
+
+    if v_exists then
+        raise exception 'Ta nazwa użytkownika z tym tagiem jest już zajęta';
+    end if;
+
+    -- 6. Update username
+    update public.profiles set username = v_final_username where id = p_user_id;
+end;
+$$ language plpgsql security definer;
+
+
 
