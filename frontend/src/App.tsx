@@ -1,51 +1,42 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
-import "./App.css";
+import { useEffect, useState } from "react";
+import { useAuthStore } from "./stores/authStore";
+import { Login } from "./components/auth/Login";
+import { Register } from "./components/auth/Register";
+import { MainLayout } from "./components/layout/MainLayout";
+import { Loader2 } from "lucide-react";
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+  const { user, loading, initialized, initialize } = useAuthStore();
+  const [isRegistering, setIsRegistering] = useState(false);
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
+  // Initialize Auth state
+  useEffect(() => {
+    let unsubscribe: () => void = () => {};
+    const initAuth = async () => {
+      unsubscribe = await initialize();
+    };
+    initAuth();
+    return () => unsubscribe();
+  }, []);
+
+  if (!initialized || (loading && !user)) {
+    return (
+      <div className="flex h-screen w-screen flex-col items-center justify-center bg-zinc-950 text-zinc-400">
+        <Loader2 size={40} className="animate-spin text-indigo-500 mb-4" />
+        <p className="text-sm font-medium tracking-wide">Inicjalizowanie Rcord...</p>
+      </div>
+    );
   }
 
-  return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
+  if (!user) {
+    if (isRegistering) {
+      return <Register onNavigateToLogin={() => setIsRegistering(false)} />;
+    }
+    return <Login onNavigateToRegister={() => setIsRegistering(true)} />;
+  }
 
-      <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
-  );
+  // Logged in layout
+  return <MainLayout />;
 }
 
 export default App;

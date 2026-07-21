@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* Default - Dark Theme (Discord-like but premium) */
+    --bg-primary: #1e1f22;
+    --bg-secondary: #2b2d31;
+    --bg-tertiary: #313338;
+    --bg-active: #35373c;
+    --text-primary: #f2f3f5;
+    --text-secondary: #b5bac1;
+    --text-muted: #949ba4;
+    --accent: #5865f2;
+    --accent-hover: #4752c4;
+    --border-color: #3f4147;
+    --font-heading: 'Outfit', sans-serif;
+    --font-body: 'Inter', sans-serif;
+  }
+
+  .theme-light {
+    --bg-primary: #f2f3f5;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #e3e5e8;
+    --bg-active: #d4d7dc;
+    --text-primary: #060607;
+    --text-secondary: #2e3035;
+    --text-muted: #4e5058;
+    --accent: #5865f2;
+    --accent-hover: #4752c4;
+    --border-color: #e3e5e8;
+  }
+
+  .theme-cyberpunk {
+    --bg-primary: #05050a;
+    --bg-secondary: #0d0d1a;
+    --bg-tertiary: #131326;
+    --bg-active: #1e1e3f;
+    --text-primary: #00ffcc;
+    --text-secondary: #ff007f;
+    --text-muted: #8b8bae;
+    --accent: #ff007f;
+    --accent-hover: #e60072;
+    --border-color: #390099;
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    @apply antialiased select-none overflow-hidden h-screen w-screen;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+
+  /* Custom Premium Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+  }
+}
+
+/* Glassmorphism styling helpers */
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-cyber {
+  background: rgba(13, 13, 26, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid #ff007f;
+  box-shadow: 0 0 15px rgba(255, 0, 127, 0.3);
+}
+
+/* Cyberpunk animations and borders */
+@keyframes pulse-neon {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(0, 255, 204, 0.5), 0 0 15px rgba(0, 255, 204, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.8), 0 0 25px rgba(0, 255, 204, 0.4);
+  }
+}
+
+.neon-border-cyber {
+  border: 1px solid #00ffcc;
+  animation: pulse-neon 2s infinite;
+}
