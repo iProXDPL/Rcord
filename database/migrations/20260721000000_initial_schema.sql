@@ -126,7 +126,9 @@ create table public.messages (
     id uuid primary key default gen_random_uuid(),
     channel_id uuid references public.channels(id) on delete cascade,
     user_id uuid references public.profiles(id) on delete set null,
+    reply_to_id uuid references public.messages(id) on delete set null,
     content text,
+    is_pinned boolean default false not null,
     embeds jsonb default '[]'::jsonb,
     fts_search_vector tsvector generated always as (to_tsvector('english', coalesce(content, ''))) stored,
     created_at timestamp with time zone default timezone('utc'::text, now()) not null
@@ -136,6 +138,17 @@ alter table public.messages enable row level security;
 
 -- Create GIN index for full-text search on messages
 create index messages_fts_idx on public.messages using gin(fts_search_vector);
+
+-- 7b. Message Reactions
+create table public.message_reactions (
+    message_id uuid references public.messages(id) on delete cascade not null,
+    user_id uuid references public.profiles(id) on delete cascade not null,
+    emoji text not null, -- unicode emoji lub custom emoji id
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+    primary key (message_id, user_id, emoji)
+);
+
+alter table public.message_reactions enable row level security;
 
 -- 8. Shop Items
 create table public.shop_items (

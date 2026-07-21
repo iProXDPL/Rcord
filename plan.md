@@ -156,6 +156,14 @@ Interfejs użytkownika będzie wzorowany na sprawdzonym i ergonomicznym układzi
   - **Wyszukiwarka wiadomości z filtrami**:
     - Wyszukiwanie pełnotekstowe (Full Text Search) zintegrowane w bazie PostgreSQL (za pomocą kolumny `fts_search_vector` i szybkiego indeksu GIN), co pozwala na błyskawiczne przeszukiwanie historii czatu.
     - Obsługa filtrów wyszukiwania (np. `has:link` dla wiadomości zawierających linki URL, `has:image` dla wiadomości z obrazami, oraz `has:file` dla wiadomości z plikami załączników).
+  - **Reakcje emoji pod wiadomościami**: Kliknięcie ikony reakcji otwiera panel emotek (w tym custom emotki serwera). Każda reakcja wyświetla się jako ikonka z licznikiem osób, które ją dodały (tabela `message_reactions`).
+  - **Odpowiadanie na wiadomości (Reply)**: Kliknięcie "Odpowiedz" na wiadomość tworzy odpowiedź z cytowaniem oryginału (podgląd wiadomości nadrzędnej nad Twoją odpowiedzią, klikalny).
+  - **Przypinanie wiadomości (Pin)**: Użytkownicy z uprawnieniami mogą przypiąć ważne wiadomości do kanału. Przypięte wiadomości są dostępne w panelu "Przypięte" w nagłówku kanału.
+  - **Wskaźnik pisania (Typing Indicator)**: Gdy ktoś pisze wiadomość na kanale, na dole czatu wyświetla się animacja "Użytkownik pisze..." (przesyłany przez Supabase Realtime Broadcast, bez zapisu do bazy).
+- **Konfigurowalne skróty klawiszowe (Keybinds)**:
+  - W ustawieniach aplikacji sekcja "Skróty klawiszowe" pozwala użytkownikowi przypisać własne kombinacje klawiszy do akcji takich jak: wyciszenie mikrofonu (Mute), wyciszenie dźwięku (Deafen), przełączenie nakładki (Toggle Overlay), Push-to-Talk oraz inne.
+  - Domyślne skróty są predefiniowane (np. `Ctrl+Shift+M` = Mute, `Ctrl+Shift+D` = Deafen), ale w pełni edytowalne.
+  - Skróty globalne (działające nawet gdy Rcord jest w tle) obsługiwane przez Tauri Global Shortcut API.
 
 ### 5. Tymczasowe Kanały i Uprawnienia
 - System uprawnień na serwerach będzie kontrolować tworzenie kanałów.
