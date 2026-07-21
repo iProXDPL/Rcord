@@ -264,6 +264,11 @@ Serwery (gildie) i kontakty będą posiadały:
   - `rcord://join/<code>` – automatycznie uruchamia aplikację i dołącza gracza do serwera (z pytaniem o potwierdzenie).
   - `rcord://add/<username#tag>` – automatycznie otwiera profil użytkownika i wysyła mu zaproszenie do znajomych.
 - **Wyszukiwarkę serwerów publicznych**: Serwery oznaczone jako `is_public` będą widoczne dla wszystkich użytkowników w sekcji odkrywania.
+- **Narzędzia Moderacji Serwera**:
+  - **Kick**: Wyrzucenie użytkownika z serwera (może ponownie dołączyć przez zaproszenie).
+  - **Ban**: Zablokowanie użytkownika z opcjonalnym powodem i opcjonalnym czasem trwania (tabela `server_bans`). Zbanowany użytkownik nie może ponownie dołączyć, nawet przez zaproszenie.
+  - **Timeout (Wyciszenie czasowe)**: Tymczasowe odebranie użytkownikowi prawa do pisania na czacie na określony czas (np. 5 min, 1h, 24h). Po upływie czasu uprawnienia wracają automatycznie.
+  - **Edycja i usuwanie wiadomości**: Użytkownik może edytować i usuwać własne wiadomości. Moderatorzy i administratorzy mogą usuwać cudze wiadomości (uprawnienie `manage_messages`).
 
 ### 6. Licencja
 - Projekt będzie wydany na licencji **MIT** (otwarte oprogramowanie dla ludzi).

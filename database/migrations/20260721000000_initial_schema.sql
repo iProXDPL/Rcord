@@ -121,6 +121,19 @@ create table public.server_invites (
 
 alter table public.server_invites enable row level security;
 
+-- 6b. Server Bans
+create table public.server_bans (
+    server_id uuid references public.servers(id) on delete cascade not null,
+    user_id uuid references public.profiles(id) on delete cascade not null,
+    banned_by uuid references public.profiles(id) on delete set null,
+    reason text,
+    expires_at timestamp with time zone, -- null = permanent ban
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+    primary key (server_id, user_id)
+);
+
+alter table public.server_bans enable row level security;
+
 -- 7. Messages
 create table public.messages (
     id uuid primary key default gen_random_uuid(),
