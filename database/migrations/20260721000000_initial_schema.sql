@@ -29,6 +29,8 @@ create table public.servers (
     is_public boolean default false,
     max_emojis integer default 50 not null,
     max_sounds integer default 10 not null,
+    max_categories integer default 15 not null,
+    max_channels integer default 100 not null,
     boost_level integer default 0 not null,
     created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
@@ -537,6 +539,53 @@ $$ language plpgsql;
 create trigger tr_check_sound_limit
     before insert on public.server_sounds
     for each row execute procedure public.check_sound_limit();
+
+
+-- Trigger functions to enforce server channel and category limits
+create or replace function public.check_channel_limit()
+returns trigger as $$
+declare
+    v_limit integer;
+    v_count integer;
+begin
+    -- DM or Group DM channel has no server_id and thus no server limits
+    if new.server_id is null then
+        return new;
+    end if;
+
+    select max_channels into v_limit from public.servers where id = new.server_id;
+    select count(*) into v_count from public.channels where server_id = new.server_id;
+    if v_count >= v_limit then
+        raise exception 'Limit kanałów na tym serwerze został osiągnięty (% sztuk). Wesprzyj serwer, aby zwiększyć limit!', v_limit;
+    end if;
+    return new;
+end;
+$$ language plpgsql;
+
+create trigger tr_check_channel_limit
+    before insert on public.channels
+    for each row execute procedure public.check_channel_limit();
+
+
+create or replace function public.check_category_limit()
+returns trigger as $$
+declare
+    v_limit integer;
+    v_count integer;
+begin
+    select max_categories into v_limit from public.servers where id = new.server_id;
+    select count(*) into v_count from public.channel_categories where server_id = new.server_id;
+    if v_count >= v_limit then
+        raise exception 'Limit kategorii na tym serwerze został osiągnięty (% sztuk). Wesprzyj serwer, aby zwiększyć limit!', v_limit;
+    end if;
+    return new;
+end;
+$$ language plpgsql;
+
+create trigger tr_check_category_limit
+    before insert on public.channel_categories
+    for each row execute procedure public.check_category_limit();
+
 
 
 -- 19. Supabase Storage Buckets and Security Policies

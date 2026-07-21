@@ -182,13 +182,13 @@ Tauri w Rust będzie monitorować uruchomione procesy gier na podstawie **statyc
   - Maksymalny rozmiar pliku emotki został podniesiony do **1 MB** (idealne dla wysokiej jakości animacji WebP/GIF).
   - Triggery bazy danych PostgreSQL blokują przekroczenie limitów ilościowych.
 - **Poziomy Wspierania Serwera (Server Boosting - 5 Etapów)**:
-  - Serwery posiadają przypisany poziom wsparcia od **Poziomu 0 (Darmowy)** do **Poziomu 5 (Maksymalne Wsparcie)**, co automatycznie zwiększa limity na emotki i dźwięki:
-    - **Poziom 0 (Darmowy)**: Max 50 emotek, 10 dźwięków.
-    - **Poziom 1**: Max 100 emotek, 20 dźwięków.
-    - **Poziom 2**: Max 150 emotek, 30 dźwięków.
-    - **Poziom 3**: Max 200 emotek, 40 dźwięków.
-    - **Poziom 4**: Max 250 emotek, 50 dźwięków.
-    - **Poziom 5 (Premium)**: Max 500 emotek, 100 dźwięków (lub brak limitów w bazie).
+  - Serwery posiadają przypisany poziom wsparcia od **Poziomu 0 (Darmowy)** do **Poziomu 5 (Maksymalne Wsparcie)**, co automatycznie zwiększa limity na emotki, dźwięki, kategorie oraz kanały za pomocą triggerów bazodanowych:
+    - **Poziom 0 (Darmowy)**: Max 50 emotek, 10 dźwięków, 15 kategorii, 100 kanałów.
+    - **Poziom 1**: Max 100 emotek, 20 dźwięków, 20 kategorii, 150 kanałów.
+    - **Poziom 2**: Max 150 emotek, 30 dźwięków, 25 kategorii, 200 kanałów.
+    - **Poziom 3**: Max 200 emotek, 40 dźwięków, 30 kategorii, 250 kanałów.
+    - **Poziom 4**: Max 250 emotek, 50 dźwięków, 35 kategorii, 300 kanałów.
+    - **Poziom 5 (Premium)**: Max 500 emotek, 100 dźwięków, 50 kategorii, 500 kanałów.
   - Globalny Admin Rcord może zmieniać te limity (lub poziomy wsparcia) bezpośrednio w bazie danych lub za pomocą panelu administratora (Admin Dashboard).
 - **Wklejanie gifów z hostingów i Ulubione**: Integracja z wyszukiwaniem gifów (Tenor/Giphy). Użytkownicy mogą wklejać gify bezpośrednio na czat oraz zapisywać dowolne gify lub emotki do swojej podręcznej listy "Ulubionych" (szybki dostęp w panelu wysyłania wiadomości).
 - **Soundboard na kanałach głosowych i Limity**:
