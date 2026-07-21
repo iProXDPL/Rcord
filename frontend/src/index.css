@@ -5,16 +5,16 @@
 @layer base {
   :root {
     /* Default - Dark Theme (Discord-like but premium) */
-    --bg-primary: #1e1f22;
-    --bg-secondary: #2b2d31;
-    --bg-tertiary: #313338;
-    --bg-active: #35373c;
-    --text-primary: #f2f3f5;
-    --text-secondary: #b5bac1;
-    --text-muted: #949ba4;
-    --accent: #5865f2;
-    --accent-hover: #4752c4;
-    --border-color: #3f4147;
+    --bg-primary: #090a0f;
+    --bg-secondary: #11131a;
+    --bg-tertiary: #181b24;
+    --bg-active: #222633;
+    --text-primary: #f3f4f6;
+    --text-secondary: #9ca3af;
+    --text-muted: #6b7280;
+    --accent: #7c5cff;
+    --accent-hover: #6b4ce6;
+    --border-color: #1f2330;
     --font-heading: 'Outfit', sans-serif;
     --font-body: 'Inter', sans-serif;
   }

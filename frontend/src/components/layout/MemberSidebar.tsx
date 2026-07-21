@@ -42,9 +42,9 @@ export const MemberSidebar: React.FC<MemberSidebarProps> = ({ collapsed }) => {
 
 
   return (
-    <div className="h-full w-60 bg-[#2b2d31] text-zinc-400 flex flex-col border-l border-[#1f2023]/40 select-none">
+    <div className="h-full w-60 bg-[var(--bg-secondary)] text-zinc-400 flex flex-col border-l border-[var(--border-color)] select-none">
       {/* Title */}
-      <div className="flex h-12 items-center px-4 border-b border-[#1f2023] font-semibold text-white text-sm">
+      <div className="flex h-12 items-center px-4 border-b border-[var(--border-color)] font-semibold text-white text-sm">
         Członkowie serwera — {mockMembers.length}
       </div>
 

@@ -41,13 +41,13 @@ export const ActiveView: React.FC<ActiveViewProps> = ({
   ];
 
   return (
-    <div className="flex flex-1 flex-col bg-[#313338] text-zinc-200">
+    <div className="flex flex-1 flex-col bg-[var(--bg-tertiary)] text-zinc-200">
       {/* Top Header Bar */}
-      <div className="flex h-12 items-center justify-between px-4 border-b border-[#1f2023] shadow-sm select-none">
+      <div className="flex h-12 items-center justify-between px-4 border-b border-[var(--border-color)] shadow-sm select-none">
         <div className="flex items-center gap-2 font-semibold text-white">
           <button
             onClick={onToggleChannelSidebar}
-            className="p-1 hover:bg-zinc-700/40 rounded md:hidden text-zinc-400 hover:text-white mr-1"
+            className="p-1 hover:bg-[var(--bg-active)]/40 rounded md:hidden text-zinc-400 hover:text-white mr-1"
           >
             <Users size={18} />
           </button>
@@ -57,7 +57,7 @@ export const ActiveView: React.FC<ActiveViewProps> = ({
               <Hash size={20} className="text-zinc-400" />
               <span className="font-heading font-bold text-sm tracking-wide">{activeChannel.name}</span>
               {activeChannel.is_temporary && (
-                <span className="text-[10px] bg-indigo-500/20 text-indigo-300 font-bold px-1.5 py-0.5 rounded border border-indigo-500/30">
+                <span className="text-[10px] bg-[var(--accent)]/20 text-indigo-300 font-bold px-1.5 py-0.5 rounded border border-[var(--accent)]/30">
                   Tymczasowy
                 </span>
               )}
@@ -67,7 +67,7 @@ export const ActiveView: React.FC<ActiveViewProps> = ({
               <button
                 onClick={() => setHomeTab('friends')}
                 className={`flex items-center gap-1.5 pb-0.5 border-b-2 text-sm font-semibold tracking-wide transition ${
-                  homeTab === 'friends' ? 'border-indigo-500 text-white' : 'border-transparent text-zinc-400 hover:text-zinc-200'
+                  homeTab === 'friends' ? 'border-[var(--accent)] text-white' : 'border-transparent text-zinc-400 hover:text-zinc-200'
                 }`}
               >
                 <Users size={16} />
@@ -76,7 +76,7 @@ export const ActiveView: React.FC<ActiveViewProps> = ({
               <button
                 onClick={() => setHomeTab('shop')}
                 className={`flex items-center gap-1.5 pb-0.5 border-b-2 text-sm font-semibold tracking-wide transition ${
-                  homeTab === 'shop' ? 'border-indigo-500 text-white' : 'border-transparent text-zinc-400 hover:text-zinc-200'
+                  homeTab === 'shop' ? 'border-[var(--accent)] text-white' : 'border-transparent text-zinc-400 hover:text-zinc-200'
                 }`}
               >
                 <ShoppingBag size={16} />
@@ -85,7 +85,7 @@ export const ActiveView: React.FC<ActiveViewProps> = ({
               <button
                 onClick={() => setHomeTab('games')}
                 className={`flex items-center gap-1.5 pb-0.5 border-b-2 text-sm font-semibold tracking-wide transition ${
-                  homeTab === 'games' ? 'border-indigo-500 text-white' : 'border-transparent text-zinc-400 hover:text-zinc-200'
+                  homeTab === 'games' ? 'border-[var(--accent)] text-white' : 'border-transparent text-zinc-400 hover:text-zinc-200'
                 }`}
               >
                 <Play size={16} />
@@ -100,7 +100,7 @@ export const ActiveView: React.FC<ActiveViewProps> = ({
           {activeServerId && (
             <button
               onClick={onToggleMemberSidebar}
-              className="p-1.5 hover:bg-zinc-700/40 rounded transition hover:text-white"
+              className="p-1.5 hover:bg-[var(--bg-active)]/40 rounded transition hover:text-white"
               title="Lista członków"
             >
               <Users size={20} />
@@ -119,8 +119,8 @@ export const ActiveView: React.FC<ActiveViewProps> = ({
               <div className="flex flex-col justify-end min-h-full">
                 <div className="space-y-4">
                   {/* Default welcome message */}
-                  <div className="border-b border-[#1f2023]/20 pb-4">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-zinc-800 text-white mb-2">
+                  <div className="border-b border-[var(--border-color)]/20 pb-4">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--bg-secondary)] text-white mb-2">
                       <Hash size={36} />
                     </div>
                     <h3 className="text-2xl font-bold text-white font-heading">

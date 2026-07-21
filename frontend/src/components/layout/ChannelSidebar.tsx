@@ -66,13 +66,13 @@ export const ChannelSidebar: React.FC<ChannelSidebarProps> = ({
   };
 
   return (
-    <div className="flex h-full w-60 flex-col bg-[#2b2d31] text-zinc-300 border-r border-[#1f2023]/40">
+    <div className="flex h-full w-60 flex-col bg-[var(--bg-secondary)] text-zinc-300 border-r border-[var(--border-color)]">
       {/* Header */}
-      <div className="flex h-12 items-center justify-between px-4 border-b border-[#1f2023] font-bold text-white shadow-sm">
+      <div className="flex h-12 items-center justify-between px-4 border-b border-[var(--border-color)] font-bold text-white shadow-sm">
         {activeServer ? (
           <button
             onClick={onServerSettingsClick}
-            className="flex w-full items-center justify-between hover:bg-zinc-700/30 py-1.5 px-2 rounded transition text-left"
+            className="flex w-full items-center justify-between hover:bg-[var(--bg-active)]/30 py-1.5 px-2 rounded transition text-left"
           >
             <span className="truncate pr-2 font-heading">{activeServer.name}</span>
             <ChevronDown size={18} className="text-zinc-400 shrink-0" />
@@ -157,8 +157,8 @@ export const ChannelSidebar: React.FC<ChannelSidebarProps> = ({
       </div>
 
       {/* User Footer Panel */}
-      <div className="flex h-[52px] items-center justify-between bg-[#232428] px-2 py-3 select-none">
-        <div className="flex items-center gap-2 min-w-0 max-w-[120px] cursor-pointer hover:bg-zinc-700/20 p-1 rounded transition">
+      <div className="flex h-[52px] items-center justify-between bg-[var(--bg-primary)] px-2 py-3 select-none border-t border-[var(--border-color)]">
+        <div className="flex items-center gap-2 min-w-0 max-w-[120px] cursor-pointer hover:bg-[var(--bg-active)]/30 p-1 rounded transition">
           <div className="relative shrink-0">
             <div className="h-8 w-8 rounded-full bg-zinc-700 overflow-hidden border border-zinc-600/30">
               {profile?.avatar_url ? (
@@ -170,13 +170,13 @@ export const ChannelSidebar: React.FC<ChannelSidebarProps> = ({
               )}
             </div>
             {/* Status indicator */}
-            <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-[#232428] bg-emerald-500" />
+            <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-[var(--bg-primary)] bg-emerald-500" />
           </div>
           <div className="flex flex-col min-w-0 leading-tight">
             <div className="flex items-center gap-1">
               <span className="truncate text-sm font-semibold text-white">{profile?.username.split('#')[0]}</span>
               {profile?.is_bot && (
-                <span className="rounded bg-indigo-500 px-1 py-0.5 text-[9px] font-bold text-white tracking-wider uppercase">
+                <span className="rounded bg-[var(--accent)] px-1 py-0.5 text-[9px] font-bold text-white tracking-wider uppercase">
                   Bot
                 </span>
               )}
@@ -191,21 +191,21 @@ export const ChannelSidebar: React.FC<ChannelSidebarProps> = ({
         <div className="flex items-center gap-0.5 text-zinc-400">
           <button
             onClick={handleMicToggle}
-            className={`p-1.5 rounded transition ${isMicMuted ? 'text-red-500 hover:bg-red-500/10' : 'hover:bg-zinc-700 hover:text-white'}`}
+            className={`p-1.5 rounded transition ${isMicMuted ? 'text-red-500 hover:bg-red-500/10' : 'hover:bg-[var(--bg-active)] hover:text-white'}`}
             title={isMicMuted ? 'Odcisz mikrofon' : 'Wycisz mikrofon'}
           >
             {isMicMuted ? <MicOff size={18} /> : <Mic size={18} />}
           </button>
           <button
             onClick={handleDeafenToggle}
-            className={`p-1.5 rounded transition ${isDeafened ? 'text-red-500 hover:bg-red-500/10' : 'hover:bg-zinc-700 hover:text-white'}`}
+            className={`p-1.5 rounded transition ${isDeafened ? 'text-red-500 hover:bg-red-500/10' : 'hover:bg-[var(--bg-active)] hover:text-white'}`}
             title={isDeafened ? 'Odcisz słuchawki' : 'Wycisz słuchawki'}
           >
             {isDeafened ? <MicOff size={18} /> : <Headphones size={18} />}
           </button>
           <button
             onClick={onUserSettingsClick}
-            className="p-1.5 rounded transition hover:bg-zinc-700 hover:text-white"
+            className="p-1.5 rounded transition hover:bg-[var(--bg-active)] hover:text-white"
             title="Ustawienia użytkownika"
           >
             <Settings size={18} />
