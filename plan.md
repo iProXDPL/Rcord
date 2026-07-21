@@ -167,9 +167,25 @@ Tauri w Rust będzie monitorować uruchomione procesy gier na podstawie **statyc
 - **Zabezpieczenie anty-AFK**: Punkty są naliczane wyłącznie wtedy, gdy gra jest oknem **aktywnym (w focusie)**, a użytkownik wykazuje aktywność systemową (brak bezczynności).
 
 ### 4. Estetyka, Motywy i Sklep
-- **Na start**: Czysty **Jasny (Light)** oraz **Ciemny (Dark)** motyw z dwoma akcentami kolorystycznymi do wyboru przez użytkownika.
-- **Dodatki w sklepie (np. Cyberpunk)**: Specjalne, animowane motywy (np. neonowy styl Cyberpunk z customową czcionką) oraz animowane obramowania profilu kupowane za punkty w sklepie.
-- **Tester Mikrofonu w Ustawieniach**: W sekcji ustawień dźwięku zaimplementujemy wizualny wskaźnik poziomu głośności (input volume meter). Użytkownik będzie mógł przetestować i zobaczyć w czasie rzeczywistym poziom dźwięku z mikrofonu przed i po przefiltrowaniu szumów przez filtr WASM RNNoise.
+- **Sklep z przedmioatmi kosmetycznymi**:
+  - Kupowane za punkty zebrane z aktywności w grach.
+  - **Awatary i obramowania profile**: Unikalne animowane obramowania wokół awatara użytkownika (np. neonowy styl Cyberpunk).
+  - **Motywy aplikacji (Themes)**: Ciemne, jasne oraz customowe motywy interfejsu (np. styl retro, cyberpunk).
+  - **Skórki i motywy do gier (Game Skins & Themes)**: Dodatkowe zestawy grafik dla bierek szachowych (np. styl pixelart, neon, fantasy), plansz szachowych, a także alternatywne motywy wizualne dla Sapera i Snake'a.
+- **Własne emotki serwera (Custom Server Emojis) i Limity**:
+  - Domyślny limit na serwerze to **50 emotek** (pliki graficzne png, jpg, webp, gif o rozmiarze do 256 KB).
+  - Triggery bazy danych PostgreSQL blokują przekroczenie tego limitu.
+  - Serwery mogą podnieść limit (np. do 250 emotek) dzięki wsparciu (boostowaniu serwera/subskrypcjom).
+- **Wklejanie gifów z hostingów i Ulubione**: Integracja z wyszukiwaniem gifów (Tenor/Giphy). Użytkownicy mogą wklejać gify bezpośrednio na czat oraz zapisywać dowolne gify lub emotki do swojej podręcznej listy "Ulubionych" (szybki dostęp w panelu wysyłania wiadomości).
+- **Soundboard na kanałach głosowych i Limity**:
+  - Serwery posiadają własną tablicę dźwięków (Soundboard) z domyślnym limitem **10 dźwięków** (pliki audio mp3/ogg do 500 KB).
+  - Dźwięki są odtwarzane w czasie rzeczywistym przez WebRTC (LiveKit DataChannel).
+  - Limit dźwięków może zostać zwiększony w przypadku wspierania serwera.
+- **Rola Globalnego Administratora Rcord (Admin Dashboard)**:
+  - Super-administratorzy Rcord posiadają dostęp do specjalnego panelu administracyjnego (Dashboard).
+  - Mogą ręcznie modyfikować limity emotek/dźwięków poszczególnych serwerów w bazie danych oraz zarządzać statusami wspierających i banami.
+- **Tester Mikrofonu w Ustawieniach**: W sekcji ustawień dźwięku zaimplementujemy wizualny wskaźnik poziomu głośności (input volume meter). Użytkownik będzie mógł przetestować i zobaczyć w czasie rzeczywim poziom dźwięku z mikrofonu przed i po przefiltrowaniu szumów przez filtr WASM RNNoise.
+
 
 ### 5. Struktura Serwerów, Kanałów i Relacji
 Serwery (gildie) i kontakty będą posiadały:

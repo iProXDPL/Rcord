@@ -25,6 +25,9 @@ create table public.servers (
     owner_id uuid references public.profiles(id) on delete set null,
     icon_url text,
     is_public boolean default false,
+    max_emojis integer default 50 not null,
+    max_sounds integer default 10 not null,
+    boost_level integer default 0 not null,
     created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
@@ -448,6 +451,91 @@ begin
     end loop;
 end;
 $$ language plpgsql security definer;
+
+-- 16. Server Emojis (Custom emojis uploaded to a server)
+create table public.server_emojis (
+    id uuid default gen_random_uuid() primary key,
+    server_id uuid references public.servers(id) on delete cascade not null,
+    name text not null,
+    url text not null,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+    created_by uuid references public.profiles(id) on delete set null
+);
+
+alter table public.server_emojis enable row level security;
+create policy "Allow select emojis for authenticated" on public.server_emojis for select to authenticated using (true);
+create policy "Allow insert emojis for authenticated" on public.server_emojis for insert to authenticated with check (true);
+create policy "Allow delete emojis for creators" on public.server_emojis for delete to authenticated using (created_by = auth.uid());
+
+-- 17. Server Sounds (Soundboard items uploaded to a server)
+create table public.server_sounds (
+    id uuid default gen_random_uuid() primary key,
+    server_id uuid references public.servers(id) on delete cascade not null,
+    name text not null,
+    url text not null,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+    created_by uuid references public.profiles(id) on delete set null
+);
+
+alter table public.server_sounds enable row level security;
+create policy "Allow select sounds for authenticated" on public.server_sounds for select to authenticated using (true);
+create policy "Allow insert sounds for authenticated" on public.server_sounds for insert to authenticated with check (true);
+create policy "Allow delete sounds for creators" on public.server_sounds for delete to authenticated using (created_by = auth.uid());
+
+-- 18. User Favorites (Favorite gifs and emojis saved by user)
+create table public.user_favorites (
+    user_id uuid references public.profiles(id) on delete cascade not null,
+    type text check (type in ('gif', 'emoji')) not null,
+    content text not null, -- URL dla gifa lub ID/znak dla emotki
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+    primary key (user_id, type, content)
+);
+
+alter table public.user_favorites enable row level security;
+create policy "Allow all actions on own favorites" on public.user_favorites for all to authenticated using (user_id = auth.uid());
+
+
+-- Trigger functions to enforce server emoji and soundboard limits
+create or replace function public.check_emoji_limit()
+returns trigger as $$
+declare
+    v_limit integer;
+    v_count integer;
+begin
+    select max_emojis into v_limit from public.servers where id = new.server_id;
+    select count(*) into v_count from public.server_emojis where server_id = new.server_id;
+    if v_count >= v_limit then
+        raise exception 'Limit emotek na tym serwerze został osiągnięty (% sztuk). Wesprzyj serwer, aby zwiększyć limit!', v_limit;
+    end if;
+    return new;
+end;
+$$ language plpgsql;
+
+create trigger tr_check_emoji_limit
+    before insert on public.server_emojis
+    for each row execute procedure public.check_emoji_limit();
+
+
+create or replace function public.check_sound_limit()
+returns trigger as $$
+declare
+    v_limit integer;
+    v_count integer;
+begin
+    select max_sounds into v_limit from public.servers where id = new.server_id;
+    select count(*) into v_count from public.server_sounds where server_id = new.server_id;
+    if v_count >= v_limit then
+        raise exception 'Limit dźwięków soundboardu na tym serwerze został osiągnięty (% sztuk). Wesprzyj serwer, aby zwiększyć limit!', v_limit;
+    end if;
+    return new;
+end;
+$$ language plpgsql;
+
+create trigger tr_check_sound_limit
+    before insert on public.server_sounds
+    for each row execute procedure public.check_sound_limit();
+
+
 
 
 
