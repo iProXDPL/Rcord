@@ -99,7 +99,7 @@ Interfejs użytkownika będzie wzorowany na sprawdzonym i ergonomicznym układzi
 3. **Panel Główny (Center Active View)**:
    - Wyświetla zawartość wybranego kanału tekstowego (okno czatu z historią wiadomości, spoilerami, rich embedami), widok pokoju głosowego (siatka uczestników z wideo/ekranem) lub widok domowy (sklep, znajomi itp.).
 4. **Pasek Członków Serwera (Rightmost Sidebar)**:
-   - Wyświetla listę użytkowników przypisanych do aktywnego serwera, pogrupowanych według ról lub statusu obecności (online, idle, dnd, offline) wraz z ich statusem aktywności w grach (Rich Presence).
+   - Wyświetla listę wszystkich członków przypisanych do całego aktywnego serwera (a nie poszczególnych kanałów czatowych, co upraszcza interfejs i jasno pokazuje skład serwera), pogrupowanych według ról lub statusu obecności (online, idle, dnd, offline) wraz z ich statusami aktywności w grach (Rich Presence).
 
 ---
 
