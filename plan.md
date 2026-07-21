@@ -269,6 +269,12 @@ Serwery (gildie) i kontakty będą posiadały:
   - **Ban**: Zablokowanie użytkownika z opcjonalnym powodem i opcjonalnym czasem trwania (tabela `server_bans`). Zbanowany użytkownik nie może ponownie dołączyć, nawet przez zaproszenie.
   - **Timeout (Wyciszenie czasowe)**: Tymczasowe odebranie użytkownikowi prawa do pisania na czacie na określony czas (np. 5 min, 1h, 24h). Po upływie czasu uprawnienia wracają automatycznie.
   - **Edycja i usuwanie wiadomości**: Użytkownik może edytować i usuwać własne wiadomości. Moderatorzy i administratorzy mogą usuwać cudze wiadomości (uprawnienie `manage_messages`).
+- **Ustawienia Serwera (Server Settings)**:
+  - **Ogólne**: Zmiana nazwy serwera, opisu (`description`), ikony (w tym animowane GIF) oraz widoczności publicznej (`is_public`).
+  - **Role i Uprawnienia**: Tworzenie, edycja i usuwanie ról. Przypisywanie zestawu uprawnień do każdej roli (np. `manage_channels`, `manage_messages`, `kick_members`, `ban_members`). Nadawanie ról użytkownikom.
+  - **Lista Banów (Unban)**: Przeglądanie listy zbanowanych użytkowników z powodami i datami. Możliwość odbanowania (usunięcie rekordu z `server_bans`).
+  - **Zaproszenia**: Przeglądanie aktywnych zaproszeń do serwera z licznikiem użyć i datą wygaśnięcia. Możliwość usunięcia zaproszenia.
+  - **Emotki i Soundboard**: Zarządzanie custom emotkami i dźwiękami serwera (dodawanie, usuwanie, podgląd limitów).
 
 ### 6. Licencja
 - Projekt będzie wydany na licencji **MIT** (otwarte oprogramowanie dla ludzi).

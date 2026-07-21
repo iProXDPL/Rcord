@@ -25,6 +25,7 @@ alter table public.profiles enable row level security;
 create table public.servers (
     id uuid primary key default gen_random_uuid(),
     name text not null,
+    description text,
     owner_id uuid references public.profiles(id) on delete set null,
     icon_url text,
     is_public boolean default false,
