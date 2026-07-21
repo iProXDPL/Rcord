@@ -25,7 +25,10 @@ Zgodnie z wymaganiami, aplikacja będzie korzystać z następujących technologi
 
 ### 3. Komunikacja Głosowa & Wideo
 - **WebRTC (LiveKit)**: Do przesyłania wideo, dźwięku z mikrofonu oraz udostępniania ekranu. LiveKit oferuje stabilne SDK dla React i Rust.
-- **RNNoise (Rust)**: Sieć neuronowa zintegrowana w kodzie Rust (Tauri backend) do usuwania szumów tła z mikrofonu w czasie rzeczywistym.
+- **Redukcja szumów (RNNoise)**: Zintegrowany filtr WASM RNNoise w AudioWorklet wewnątrz Webview (React), co gwarantuje spójne, ultra-lekkie działanie bez szumów tła na Windowsie, Linuksie i Androidzie.
+- **Metody Aktywacji Mikrofonu**:
+  - **Aktywacja Głosowa (VAD - Voice Activity Detection)**: Automatyczne nadawanie po przekroczeniu progu decybeli.
+  - **Naciśnij i Mów (PTT - Push-to-Talk)**: Nadawanie po wciśnięciu klawisza. Na desktopie Tauri rejestruje globalny skrót klawiszowy w Rust (używając `@tauri-apps/plugin-global-shortcut`), dzięki czemu klawisz działa podczas grania w gry w tle.
 
 ---
 
@@ -52,22 +55,42 @@ graph TD
 
 ### 1. Centrum Gier i naliczanie punktów
 - Wdrożymy **oba rozwiązania**:
-  - **Gry wbudowane (React/HTML5)**: Punkty będą przyznawane za wygraną (więcej punktów) i przegraną (mniej punktów).
+  - **Gry wbudowane (React/HTML5)**:
+    - **Saper (Minesweeper)** i **Snake**: Gry jednoosobowe, naliczanie punktów za ukończone gry / długość węża (zabezpieczenie przed botami na punkty).
+    - **Szachy (Chess)**: Gra wieloosobowa PvP online. Gracz może wysłać na wybranym kanale czatu kartę wyzwania ("Chcę zagrać w szachy!"). Dowolny inny użytkownik na kanale klika "Dołącz", co inicjuje mecz PvP synchronizowany w czasie rzeczywistym przez Supabase Realtime (z zegarami gry).
+    - Punkty są przyznawane za wygraną (więcej) i przegraną (mniej).
   - **Wykrywanie gier w tle**: Aplikacja Tauri na desktopie będzie monitorować aktywne procesy gier i naliczać punkty za sam czas spędzony w grze.
 
 ### 2. System Tworzenia Botów
 - Wdrożymy **klasyczne API i połączenie WebSocket** (Opcja B). System będzie generował tokeny botów. Zewnętrzne boty będą mogły łączyć się z naszym serwerem WebSocket i wysyłać komendy przez REST API.
+- **Przykładowy Bot w Repozytorium**: W folderze `/bot-example` dołączymy gotowy, w pełni funkcjonalny szablon bota napisanego w Node.js/TypeScript. Będzie on pokazywał:
+  - Autoryzację tokenem.
+  - Odbieranie zdarzeń przez WebSocket (`MESSAGE_CREATE`).
+  - Wysyłanie odpowiedzi przez REST API i obsługę komend (np. Slash Commands).
+  - **Logikę Bota Muzycznego**: Pokazanie, jak bot dołącza do pokoju głosowego jako wirtualny uczestnik przy użyciu **LiveKit SDK** i streamuje dźwięk (np. plik audio lub pobierany z YouTube) bezpośrednio jako ścieżkę audio (mikrofon) do pokoju głosowego. Użytkownicy sterują nim za pomocą komend czatu (np. `/play`, `/skip`).
 
 ### 3. Nakładka (Overlay) i wersja Mobilna
 - **Nakładka (Overlay)** będzie działać **tylko na komputerach stacjonarnych (Windows, Linux)**.
-- Na **Androidzie** skupiamy się wyłącznie na standardowym interfejsie czatu, kanałach tekstowych, rozmowach głosowych i wideo.
+- Na **Androidzie** oraz w głównym oknie desktopowym skupiamy się na standardowym, dopracowanym interfejsie czatu.
+- **Funkcje Okna Czatu**:
+  - **Pełne wsparcie dla Markdown (MD)**: renderowanie pogrubień, kursywy, list, cytatów oraz bloków kodu z kolorowaniem składni (np. dla języków programowania).
+  - **Automatyczne Embedy (Rich Embeds)**:
+    - **YouTube**: Automatyczne renderowanie odtwarzacza wideo (iframe) pod wiadomością zawierającą link.
+    - **Twitter/X**: Podgląd tweetów i mediów.
+    - **Obrazy i Gify**: Bezpośrednie wyświetlanie obrazków (png, jpg, webp, gif) przesłanych jako linki.
+    - **Inne linki (OpenGraph)**: Natywny kod Rust w Tauri pobiera metadane strony (tytuł, opis, miniatura), omijając zabezpieczenia CORS w przeglądarce, i przesyła je do frontendu React w celu wyświetlenia ramki podglądu.
+  - **Przesyłanie plików i programów (załączniki)**: 
+    - Pliki (dokumenty, archiwum `.zip`, instalatory `.exe`/`.deb` itp.) o rozmiarze do **50 MB** są przesyłane bezpośrednio do **Supabase Storage** (bucket `attachments`).
+    - Na czacie wyświetla się elegancka karta załącznika pokazująca nazwę pliku, rozmiar, ikonę rozszerzenia oraz przycisk do pobrania. Obrazy i pliki wideo mają automatyczny podgląd (preview) wewnątrz czatu.
 
 ### 4. Tymczasowe Kanały i Uprawnienia
 - System uprawnień na serwerach będzie kontrolować tworzenie kanałów.
 - Użytkownicy ze specjalnymi uprawnieniami w danej grupie kanałów będą mieli możliwość tworzenia kanałów tymczasowych (które automatycznie znikają, gdy wszyscy je opuszczą).
 
 ### 5. Backend i Docker
-- **Docker jest zainstalowany i skonfigurowany.** Wykorzystamy oficjalny **Supabase CLI** do lokalnego uruchomienia bazy w Dockerze, co uprości migracje i testy offline.
+- **Docker jest zainstalowany i skonfigurowany.**
+- Wykorzystamy oficjalny **Supabase CLI** do lokalnego uruchomienia bazy w Dockerze.
+- Dodatkowo, w folderze głównym projektu stworzymy `docker-compose.yml` do uruchomienia lokalnego serwera **LiveKit SFU** na porcie `7800` (z kluczem/sekretem deweloperskim), co ułatwi lokalne testowanie rozmów wideo i audio bez zależności od chmury.
 
 ---
 
@@ -80,6 +103,7 @@ graph TD
   - **Google Auth**
   - **Twitch Auth**
   - **Discord Auth**
+- **Generator Nazw z Tagiem (`name#1234`)**: Przy rejestracji system automatycznie przydziela 4-cyfrowy unikalny identyfikator (tag) oddzielony znakiem `#` (np. `ipro#9482`). Pozwala to na powtarzanie się samych nazw użytkowników, zachowując unikalność w bazie, dokładnie tak jak na Discordzie.
 
 ### 2. Centrum Gier (Gry wbudowane)
 Na start wdrożymy trzy gry wbudowane (React + Tailwind):
@@ -96,12 +120,15 @@ Tauri w Rust będzie monitorować uruchomione procesy popularnych gier, ale z za
 ### 4. Estetyka, Motywy i Sklep
 - **Na start**: Czysty **Jasny (Light)** oraz **Ciemny (Dark)** motyw z dwoma akcentami kolorystycznymi do wyboru przez użytkownika.
 - **Dodatki w sklepie (np. Cyberpunk)**: Specjalne, animowane motywy (np. neonowy styl Cyberpunk z customową czcionką) oraz animowane obramowania profilu kupowane za punkty w sklepie.
+- **Tester Mikrofonu w Ustawieniach**: W sekcji ustawień dźwięku zaimplementujemy wizualny wskaźnik poziomu głośności (input volume meter). Użytkownik będzie mógł przetestować i zobaczyć w czasie rzeczywistym poziom dźwięku z mikrofonu przed i po przefiltrowaniu szumów przez filtr WASM RNNoise.
 
-### 5. Struktura Serwerów i Kanałów
-Serwery (gildie) będą posiadały:
-- **Kanały i Kategorie (Grupy kanałów)**.
-- **Uprawnienia i Role** dla użytkowników.
-- **Zaproszenia (Invite Links)**: Generowanie unikalnych linków do dołączania.
+### 5. Struktura Serwerów, Kanałów i Relacji
+Serwery (gildie) i kontakty będą posiadały:
+- **Kanały i Kategorie (Grupy kanałów)** na serwerach.
+- **Rozmowy Prywatne (DMs)** oraz **Grupowe Rozmowy Prywatne (Group DMs)**: Komunikacja poza serwerami, zintegrowana w tych samych tabelach wiadomości dzięki relacji z `channel_members` (kiedy `server_id` jest puste).
+- **Lista Znajomych (Friends List)** i system relacji: wysyłanie zaproszeń do znajomych przy użyciu pełnego tagu (np. `friend#1122`), statusy: znajomi, zablokowani, oczekujące.
+- **Uprawnienia i Role** dla użytkowników na serwerach.
+- **Zaproszenia (Invite Links)**: Generowanie unikalnych linków do dołączania do serwerów. Oprócz tradycyjnego wklejania kodu w oknie dialogowym, Tauri zarejestruje systemowy protokół `rcord://` (np. `rcord://join/kod`). Kliknięcie takiego linku na stronie internetowej automatycznie uruchomi aplikację Rcord i dołączy gracza do serwera.
 - **Wyszukiwarkę serwerów publicznych**: Serwery oznaczone jako `is_public` będą widoczne dla wszystkich użytkowników w sekcji odkrywania.
 
 ### 6. Licencja
@@ -191,6 +218,18 @@ W Supabase PostgreSQL utworzymy następujące tabele (pliki migracji w folderze 
     - `owner_id` (UUID, references profiles(id) on delete cascade)
     - `token_hash` (text, unique)
     - `created_at` (timestamp)
+
+11. **chess_matches**:
+    - `id` (UUID, Primary Key)
+    - `player_white` (UUID, references profiles(id))
+    - `player_black` (UUID, references profiles(id))
+    - `board_state` (text, FEN representation)
+    - `current_turn` (text: 'white'/'black')
+    - `status` (text: 'active'/'white_win'/'black_win'/'draw')
+    - `created_at` (timestamp)
+
+12. **Procedury i Funkcje (PostgreSQL Stored Procedures)**:
+    - **`buy_shop_item(user_id, item_id)`**: Bezpieczna funkcja wykonywana wewnątrz transakcji bazodanowej SQL. Sprawdza stan punktów użytkownika, pobiera cenę przedmiotu ze `shop_items`, sprawdza czy użytkownik ma wystarczającą ilość punktów, a następnie odejmuje punkty z tabeli `profiles` i wstawia rekord zakupu do `user_inventory`. Zapobiega oszustwom i double-spending.
 
 ---
 

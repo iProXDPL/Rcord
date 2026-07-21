@@ -1,0 +1,14 @@
+version: '3.9'
+
+services:
+  livekit:
+    image: livekit/livekit-server:v1.5
+    container_name: rcord-livekit
+    command: --config /etc/livekit.yaml
+    ports:
+      - "7800:7800" # Signaling & HTTP API
+      - "7801:7801" # WebRTC Turn/Stun
+      - "50000-50050:50000-50050/udp" # UDP Media ports
+    volumes:
+      - ./livekit.yaml:/etc/livekit.yaml
+    restart: unless-stopped

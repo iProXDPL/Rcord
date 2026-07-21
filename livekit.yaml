@@ -1,0 +1,18 @@
+# LiveKit Server Local Configuration
+
+port: 7800
+bind_addresses:
+  - ""
+
+# API keys and secrets for server authentication
+keys:
+  devkey: "secret-key-development-rcord-only-use-local"
+
+logging:
+  level: info
+
+rtc:
+  port_range_start: 50000
+  port_range_end: 50050
+  # Since it's local development inside Docker, we don't need external IP detection
+  use_external_ip: false
