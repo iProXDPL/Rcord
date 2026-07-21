@@ -112,7 +112,7 @@ Interfejs użytkownika będzie wzorowany na sprawdzonym i ergonomicznym układzi
      - Wyciszenie / odciszenie słuchawek (Deafen): odtwarzanie `headphones-mute.mp3`.
      - Nowa wiadomość na aktywnym serwerze / kanale: odtwarzanie `Bip.mp3`.
      - Nowa wiadomość prywatna (DM) lub bezpośrednia wzmianka (@mention): odtwarzanie `Bip-bip.mp3`.
-   - **Wyciszanie per kanał/serwer**: Użytkownik może wyciszyć powiadomienia dla konkretnego kanału lub całego serwera (mute), wyłączając dźwięki powiadomień i natywne popupy, pozostawiając jedynie dyskretne odznaki graficzne.
+   - **Wyciszanie per kanał/serwer (Mute Sync)**: Użytkownik może wyciszyć powiadomienia dla konkretnego kanału lub całego serwera. Preferencje wyciszenia są zapisywane w bazie danych (tabela `user_notification_settings`), co pozwala na natychmiastową synchronizację wyciszeń na wszystkich urządzeniach użytkownika (desktop, przeglądarka, telefon). Wyciszenie wyłącza dźwięki powiadomień i natywne popupy, pozostawiając jedynie dyskretne odznaki graficzne.
 6. **Rozbudowane Menu Kontekstowe (Context Menu)**:
    - **Desktop (PPM / Right-click)**: Kliknięcie prawym przyciskiem myszy na dowolny element interfejsu wyświetla rozbudowane menu kontekstowe z akcjami dostosowanymi do typu elementu:
      - **Wiadomość**: Odpowiedz, Reakcja, Edytuj (własna), Usuń, Przypnij, Kopiuj tekst, Kopiuj ID, Oznacz jako spoiler.

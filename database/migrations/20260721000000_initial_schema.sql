@@ -212,6 +212,23 @@ create table public.user_inventory (
 
 alter table public.user_inventory enable row level security;
 
+-- 9b. User Notification Settings (wyciszenia kanałów/serwerów)
+create table public.user_notification_settings (
+    user_id uuid references public.profiles(id) on delete cascade not null,
+    server_id uuid references public.servers(id) on delete cascade,
+    channel_id uuid references public.channels(id) on delete cascade,
+    is_muted boolean default false not null,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+    primary key (user_id, server_id, channel_id),
+    -- Zapewniamy, że wyciszamy albo serwer, albo kanał
+    constraint check_only_one_target check (
+        (server_id is not null and channel_id is null) or 
+        (server_id is null and channel_id is not null)
+    )
+);
+
+alter table public.user_notification_settings enable row level security;
+
 -- 10. Bot Tokens
 create table public.bot_tokens (
     id uuid primary key default gen_random_uuid(),
@@ -302,6 +319,11 @@ create policy "Allow insert messages" on public.messages for insert to authentic
 create policy "Allow select shop items" on public.shop_items for select to authenticated using (true);
 create policy "Allow select inventory" on public.user_inventory for select to authenticated using (true);
 create policy "Allow buy items" on public.user_inventory for insert to authenticated with check (user_id = auth.uid());
+
+create policy "Allow select own notification settings" on public.user_notification_settings for select to authenticated using (user_id = auth.uid());
+create policy "Allow insert own notification settings" on public.user_notification_settings for insert to authenticated with check (user_id = auth.uid());
+create policy "Allow update own notification settings" on public.user_notification_settings for update to authenticated using (user_id = auth.uid());
+create policy "Allow delete own notification settings" on public.user_notification_settings for delete to authenticated using (user_id = auth.uid());
 
 create policy "Allow select bot tokens for owner" on public.bot_tokens for select to authenticated using (owner_id = auth.uid());
 create policy "Allow create bot tokens for owner" on public.bot_tokens for insert to authenticated with check (owner_id = auth.uid());
