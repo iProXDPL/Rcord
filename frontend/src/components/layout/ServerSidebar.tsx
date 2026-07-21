@@ -77,22 +77,26 @@ export const ServerSidebar: React.FC<ServerSidebarProps> = ({ onAddServerClick }
         })}
 
         {/* Add Server Button */}
-        <button
-          onClick={onAddServerClick}
-          className="group flex h-12 w-12 items-center justify-center rounded-[24px] bg-[var(--bg-tertiary)] text-emerald-500 transition-all duration-200 hover:rounded-[16px] hover:bg-emerald-500 hover:text-white"
-          title="Dodaj serwer"
-        >
-          <Plus size={24} />
-        </button>
+        <div className="group relative w-full flex justify-center py-0.5">
+          <button
+            onClick={onAddServerClick}
+            className="flex h-12 w-12 items-center justify-center rounded-[24px] bg-[var(--bg-tertiary)] text-emerald-500 transition-all duration-200 hover:rounded-[16px] hover:bg-emerald-500 hover:text-white"
+            title="Dodaj serwer"
+          >
+            <Plus size={24} />
+          </button>
+        </div>
       </div>
 
       {/* Discovery Button */}
-      <button
-        className="group relative flex h-12 w-12 items-center justify-center rounded-[24px] bg-[var(--bg-tertiary)] text-zinc-300 transition-all duration-200 hover:rounded-[16px] hover:bg-[var(--accent)] hover:text-white"
-        title="Odkrywaj publiczne serwery"
-      >
-        <Compass size={24} />
-      </button>
+      <div className="group relative w-full flex justify-center py-0.5">
+        <button
+          className="flex h-12 w-12 items-center justify-center rounded-[24px] bg-[var(--bg-tertiary)] text-zinc-300 transition-all duration-200 hover:rounded-[16px] hover:bg-[var(--accent)] hover:text-white"
+          title="Odkrywaj publiczne serwery"
+        >
+          <Compass size={24} />
+        </button>
+      </div>
     </div>
   );
 };

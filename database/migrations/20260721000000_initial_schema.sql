@@ -722,6 +722,41 @@ create policy "Allow insert soundboard max 2MB audio" on storage.objects for ins
     metadata->>'mimetype' ~ 'audio/.*'
 );
 
+-- Profiles, Avatars and Banners Storage Buckets
+insert into storage.buckets (id, name, public)
+values ('avatars', 'avatars', true)
+on conflict (id) do nothing;
+
+insert into storage.buckets (id, name, public)
+values ('banners', 'banners', true)
+on conflict (id) do nothing;
+
+-- Policies for avatars bucket (max 5MB, images only)
+create policy "Allow read avatars for all" on storage.objects for select using (bucket_id = 'avatars');
+create policy "Allow insert/update own avatars" on storage.objects for insert to authenticated with check (
+    bucket_id = 'avatars' and
+    (storage.foldername(name))[1] = auth.uid()::text and
+    (metadata->>'size')::int <= 5242880 and
+    metadata->>'mimetype' ~ 'image/.*'
+);
+create policy "Allow delete own avatars" on storage.objects for delete to authenticated using (
+    bucket_id = 'avatars' and
+    (storage.foldername(name))[1] = auth.uid()::text
+);
+
+-- Policies for banners bucket (max 10MB, images only)
+create policy "Allow read banners for all" on storage.objects for select using (bucket_id = 'banners');
+create policy "Allow insert/update own banners" on storage.objects for insert to authenticated with check (
+    bucket_id = 'banners' and
+    (storage.foldername(name))[1] = auth.uid()::text and
+    (metadata->>'size')::int <= 10485760 and
+    metadata->>'mimetype' ~ 'image/.*'
+);
+create policy "Allow delete own banners" on storage.objects for delete to authenticated using (
+    bucket_id = 'banners' and
+    (storage.foldername(name))[1] = auth.uid()::text
+);
+
 -- Explicitly Grant Privileges to Client Roles
 grant usage on schema public to anon, authenticated;
 grant select, insert, update, delete on all tables in schema public to anon, authenticated;

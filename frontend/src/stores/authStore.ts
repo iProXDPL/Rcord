@@ -2,6 +2,51 @@ import { create } from 'zustand';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 
+const isExternalUrl = (url: string | null | undefined): boolean => {
+  if (!url) return false;
+  return url.startsWith('http') && !url.includes('/storage/v1/object/public/');
+};
+
+const syncExternalAvatar = async (userId: string, externalUrl: string) => {
+  try {
+    const res = await fetch(externalUrl);
+    if (!res.ok) return;
+    const blob = await res.blob();
+    
+    // Default to png if MIME type splitting doesn't give a correct extension
+    let fileExt = blob.type.split('/')[1] || 'png';
+    if (fileExt.includes('+') || fileExt.length > 4) fileExt = 'png';
+    const filePath = `${userId}/avatar.${fileExt}`;
+    
+    const { error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(filePath, blob, { upsert: true });
+      
+    if (uploadError) {
+      console.error('Error uploading avatar:', uploadError);
+      return;
+    }
+    
+    const { data: { publicUrl } } = supabase.storage
+      .from('avatars')
+      .getPublicUrl(filePath);
+      
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({ avatar_url: publicUrl })
+      .eq('id', userId);
+      
+    if (!updateError) {
+      const store = useAuthStore.getState();
+      if (store.profile) {
+        store.setProfile({ ...store.profile, avatar_url: publicUrl });
+      }
+    }
+  } catch (err) {
+    console.error('Failed to sync external avatar:', err);
+  }
+};
+
 export interface Profile {
   id: string;
   username: string;
@@ -30,6 +75,7 @@ interface AuthState {
   register: (email: string, password: string, username: string, birthdate: string) => Promise<void>;
   logout: () => Promise<void>;
   initialize: () => Promise<() => void>;
+  setProfile: (profile: Profile | null) => void;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -39,6 +85,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   loading: false,
   initialized: false,
   error: null,
+  setProfile: (profile) => set({ profile }),
   login: async (email, password) => {
     set({ loading: true, error: null });
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
@@ -127,6 +174,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       }
     }
 
+    if (profile && session?.user && isExternalUrl(profile.avatar_url)) {
+      syncExternalAvatar(session.user.id, profile.avatar_url as string);
+    }
+
     set({
       session,
       user: session?.user ?? null,
@@ -137,6 +188,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, currentSession) => {
       if (currentSession?.user) {
         const { data } = await supabase.from('profiles').select('*').eq('id', currentSession.user.id).single();
+        if (data && isExternalUrl(data.avatar_url)) {
+          syncExternalAvatar(currentSession.user.id, data.avatar_url as string);
+        }
         set({
           session: currentSession,
           user: currentSession.user,
