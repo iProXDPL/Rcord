@@ -114,9 +114,9 @@ Na start wdrożymy trzy gry wbudowane (React + Tailwind):
 Punkty będą naliczane za wyniki (zwycięstwo daje więcej punktów, przegrana mniej).
 
 ### 3. Gry w tle (System Anty-AFK)
-Tauri w Rust będzie monitorować uruchomione procesy popularnych gier, ale z zabezpieczeniem przed zdobywaniem punktów za AFK/menu:
-- Będziemy sprawdzać, czy okno gry jest oknem **aktywnym (w focusie)**.
-- Będziemy mierzyć aktywność użytkownika (ruch myszką/klawiatura w grze, o ile system na to pozwoli bez uprawnień roota, lub po prostu aktywność okna i brak bezczynności).
+Tauri w Rust będzie monitorować uruchomione procesy gier na podstawie **statycznej, wbudowanej listy najpopularniejszych gier** (np. Minecraft, Counter-Strike 2, League of Legends, GTA V, Fortnite, Valorant, Cyberpunk 2077).
+- Naliczanie punktów nastąpi wyłącznie wtedy, gdy proces gry jest wykryty oraz okno gry jest **aktywne (w focusie)**.
+- Wykorzystamy wbudowane zabezpieczenie anty-AFK (sprawdzanie aktywności okna i brak bezczynności systemowej), aby zapobiec farmowaniu punktów w tle przy zminimalizowanej grze.
 
 ### 4. Estetyka, Motywy i Sklep
 - **Na start**: Czysty **Jasny (Light)** oraz **Ciemny (Dark)** motyw z dwoma akcentami kolorystycznymi do wyboru przez użytkownika.
