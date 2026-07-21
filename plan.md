@@ -108,6 +108,19 @@ Interfejs użytkownika będzie wzorowany na sprawdzonym i ergonomicznym układzi
    - **Odznaki (Badges)**: Ikony serwerów i kanałów wyświetlają licznik nieprzeczytanych wiadomości (czerwona odznaka z liczbą).
    - **Natywne powiadomienia desktopowe**: Wykorzystanie Tauri Notification API do wyświetlania systemowych powiadomień push (popup OS) z dźwiękiem przy nowych wiadomościach, wzmianach (@mention) i zaproszeniach do znajomych.
    - **Wyciszanie per kanał/serwer**: Użytkownik może wyciszyć powiadomienia dla konkretnego kanału lub całego serwera (mute), zachowując odznakę bez dźwięku, lub całkowicie ukryć powiadomienia.
+6. **Rozbudowane Menu Kontekstowe (Context Menu)**:
+   - **Desktop (PPM / Right-click)**: Kliknięcie prawym przyciskiem myszy na dowolny element interfejsu wyświetla rozbudowane menu kontekstowe z akcjami dostosowanymi do typu elementu:
+     - **Wiadomość**: Odpowiedz, Reakcja, Edytuj (własna), Usuń, Przypnij, Kopiuj tekst, Kopiuj ID, Oznacz jako spoiler.
+     - **Użytkownik**: Profil, Wyślij wiadomość, Dodaj do znajomych, Wycisz, Kick, Ban, Zmień nick, Kopiuj ID.
+     - **Kanał**: Wycisz powiadomienia, Edytuj kanał, Kopiuj ID, Klonuj kanał, Usuń kanał.
+     - **Serwer (ikona)**: Wycisz, Ustawienia serwera, Utwórz zaproszenie, Zmień nick, Opuść serwer.
+   - **Mobile (Long-press)**: Na Androidzie te same menu kontekstowe wywoływane są przez **długie przytrzymanie palcem** (long-press) na danym elemencie. Menu wyświetla się jako dolny panel (bottom sheet) z przyciskami akcji dostosowanymi do ekranu dotykowego.
+7. **Responsywny Layout Mobilny (Android)**:
+   - Na urządzeniach mobilnych 4-kolumnowy layout przechodzi w tryb **jednoekranowy z nawigacją gestami**:
+     - Przesunięcie palcem od lewej krawędzi odsłania pasek serwerów i kanałów (drawer).
+     - Przesunięcie palcem od prawej krawędzi odsłania pasek członków (drawer).
+     - Domyślnie widoczny jest tylko panel główny (czat/widok aktywny).
+   - Dolny pasek nawigacji na telefonie zapewnia szybki dostęp do: Home (DMs), Znajomych, Wyszukiwania i Profilu.
 
 ---
 
