@@ -255,7 +255,6 @@ create table public.chess_matches (
 
 alter table public.chess_matches enable row level security;
 
--- Automatic Profile Creation on auth.users registration
 create or replace function public.handle_new_user()
 returns trigger as $$
 declare
@@ -264,7 +263,12 @@ declare
     v_final_username text;
     v_exists boolean;
 begin
-    v_base_username := coalesce(new.raw_user_meta_data->>'username', split_part(new.email, '@', 1));
+    v_base_username := coalesce(
+        new.raw_user_meta_data->>'username',
+        new.raw_user_meta_data->>'full_name',
+        new.raw_user_meta_data->>'name',
+        split_part(new.email, '@', 1)
+    );
     -- Ograniczamy długość bazy nazwy do 15 znaków
     v_base_username := substring(v_base_username from 1 for 15);
     
@@ -283,10 +287,20 @@ begin
     values (
         new.id,
         v_final_username,
-        new.raw_user_meta_data->>'avatar_url',
+        coalesce(new.raw_user_meta_data->>'avatar_url', new.raw_user_meta_data->>'picture'),
         new.raw_user_meta_data->>'banner_url',
-        (new.raw_user_meta_data->>'birthdate')::date,
-        coalesce((new.raw_user_meta_data->>'is_bot')::boolean, false)
+        (case 
+            when new.raw_user_meta_data->>'birthdate' is null then null
+            when new.raw_user_meta_data->>'birthdate' = '' then null
+            when new.raw_user_meta_data->>'birthdate' = 'null' then null
+            else (new.raw_user_meta_data->>'birthdate')::date
+         end),
+        (case 
+            when new.raw_user_meta_data->>'is_bot' is null then false
+            when new.raw_user_meta_data->>'is_bot' = '' then false
+            when new.raw_user_meta_data->>'is_bot' = 'null' then false
+            else (new.raw_user_meta_data->>'is_bot')::boolean
+         end)
     );
     return new;
 end;
@@ -302,7 +316,7 @@ returns trigger as $$
 begin
     update public.profiles
     set 
-        avatar_url = coalesce(new.raw_user_meta_data->>'avatar_url', profiles.avatar_url),
+        avatar_url = coalesce(new.raw_user_meta_data->>'avatar_url', new.raw_user_meta_data->>'picture', profiles.avatar_url),
         banner_url = coalesce(new.raw_user_meta_data->>'banner_url', profiles.banner_url)
     where id = new.id;
     return new;
