@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useServerStore } from '../../stores/serverStore';
 import { useChannelStore } from '../../stores/channelStore';
 import { useAuthStore } from '../../stores/authStore';
+import { supabase } from '../../lib/supabase';
 import {
   Hash,
   Send,
@@ -12,7 +13,12 @@ import {
   Users,
   ShoppingBag,
   Sparkles,
-  Play
+  Play,
+  UserPlus,
+  UserCheck,
+  UserX,
+  MessageSquare,
+  Clock
 } from 'lucide-react';
 
 interface ActiveViewProps {
@@ -30,6 +36,135 @@ export const ActiveView: React.FC<ActiveViewProps> = ({
 
   const [message, setMessage] = useState('');
   const [homeTab, setHomeTab] = useState<'friends' | 'shop' | 'games'>('friends');
+
+  // Friends System States
+  const [friendsSubTab, setFriendsSubTab] = useState<'all' | 'pending' | 'add'>('all');
+  const [searchNickname, setSearchNickname] = useState('');
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [friends, setFriends] = useState<any[]>([]);
+  const [pendingRequests, setPendingRequests] = useState<any[]>([]);
+  const [loadingSearch, setLoadingSearch] = useState(false);
+  const [searchFilter, setSearchFilter] = useState('');
+
+  // Load friends list and pending requests
+  const fetchFriends = async () => {
+    if (!profile) return;
+    try {
+      const { data: rels } = await supabase
+        .from('relationships')
+        .select('friend_id, status')
+        .eq('user_id', profile.id);
+
+      if (rels) {
+        const friendIds = rels.filter(r => r.status === 'friends').map(r => r.friend_id);
+        const pendingIds = rels.filter(r => r.status === 'pending_received' || r.status === 'pending_sent').map(r => r.friend_id);
+
+        let fetchedFriends: any[] = [];
+        let fetchedPending: any[] = [];
+
+        if (friendIds.length > 0) {
+          const { data: fProfiles } = await supabase
+            .from('profiles')
+            .select('*')
+            .in('id', friendIds);
+          if (fProfiles) fetchedFriends = fProfiles;
+        }
+
+        if (pendingIds.length > 0) {
+          const { data: pProfiles } = await supabase
+            .from('profiles')
+            .select('*')
+            .in('id', pendingIds);
+          if (pProfiles) {
+            fetchedPending = pProfiles.map(p => {
+              const rel = rels.find(r => r.friend_id === p.id);
+              return {
+                ...p,
+                status: rel?.status || 'pending'
+              };
+            });
+          }
+        }
+
+        setFriends(fetchedFriends);
+        setPendingRequests(fetchedPending);
+      }
+    } catch (e) {
+      console.error('Error fetching friends:', e);
+    }
+  };
+
+  useEffect(() => {
+    if (!activeServerId && homeTab === 'friends') {
+      fetchFriends();
+    }
+  }, [activeServerId, homeTab, profile]);
+
+  const handleSearchUsers = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchNickname.trim() || !profile) return;
+    setLoadingSearch(true);
+    try {
+      const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .ilike('username', `%${searchNickname.trim()}%`)
+        .neq('id', profile.id)
+        .limit(10);
+      if (data) {
+        setSearchResults(data);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingSearch(false);
+    }
+  };
+
+  const handleSendFriendRequest = async (friendId: string) => {
+    if (!profile) return;
+    try {
+      await supabase.from('relationships').upsert({
+        user_id: profile.id,
+        friend_id: friendId,
+        status: 'pending_sent',
+        updated_at: new Date().toISOString()
+      });
+      await supabase.from('relationships').upsert({
+        user_id: friendId,
+        friend_id: profile.id,
+        status: 'pending_received',
+        updated_at: new Date().toISOString()
+      });
+      fetchFriends();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleAcceptRequest = async (friendId: string) => {
+    if (!profile) return;
+    try {
+      await supabase.from('relationships')
+        .upsert({ user_id: profile.id, friend_id: friendId, status: 'friends', updated_at: new Date().toISOString() });
+      await supabase.from('relationships')
+        .upsert({ user_id: friendId, friend_id: profile.id, status: 'friends', updated_at: new Date().toISOString() });
+      fetchFriends();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeclineRequest = async (friendId: string) => {
+    if (!profile) return;
+    try {
+      await supabase.from('relationships').delete().eq('user_id', profile.id).eq('friend_id', friendId);
+      await supabase.from('relationships').delete().eq('user_id', friendId).eq('friend_id', profile.id);
+      fetchFriends();
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const activeChannel = channels.find(c => c.id === activeChannelId);
 
@@ -188,23 +323,292 @@ export const ActiveView: React.FC<ActiveViewProps> = ({
           /* HOME TAB ACTIVE VIEWS */
           <div className="flex-1 overflow-y-auto p-6">
             {homeTab === 'friends' && (
-              <div className="space-y-6 select-none">
-                <div className="flex items-center justify-between border-b border-[#1f2023] pb-4">
-                  <h3 className="text-xl font-bold text-white font-heading">Twoi znajomi</h3>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Szukaj..."
-                      className="bg-[#1e1f22] rounded-lg pl-8 pr-4 py-1.5 text-xs text-white placeholder-zinc-500 border border-transparent focus:border-indigo-500 outline-none"
-                    />
-                    <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-500" />
+              <div className="space-y-6 select-none animate-in fade-in duration-200">
+                {/* Friends Sub-navigation */}
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-zinc-800 pb-4 gap-4">
+                  <div className="flex items-center gap-3">
+                    <Users size={22} className="text-zinc-400" />
+                    <h3 className="text-lg font-bold text-white font-heading mr-4">Znajomi</h3>
+                    
+                    <button
+                      onClick={() => setFriendsSubTab('all')}
+                      className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition ${
+                        friendsSubTab === 'all' 
+                          ? 'bg-[var(--bg-active)] text-white' 
+                          : 'text-zinc-400 hover:text-zinc-200'
+                      }`}
+                    >
+                      Wszyscy ({friends.length})
+                    </button>
+                    <button
+                      onClick={() => setFriendsSubTab('pending')}
+                      className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition relative ${
+                        friendsSubTab === 'pending' 
+                          ? 'bg-[var(--bg-active)] text-white' 
+                          : 'text-zinc-400 hover:text-zinc-200'
+                      }`}
+                    >
+                      Oczekujące ({pendingRequests.length})
+                      {pendingRequests.filter(r => r.status === 'pending_received').length > 0 && (
+                        <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+                      )}
+                    </button>
+                    <button
+                      onClick={() => setFriendsSubTab('add')}
+                      className={`px-3 py-1.5 text-xs font-bold rounded-lg transition ${
+                        friendsSubTab === 'add' 
+                          ? 'bg-emerald-500 text-white shadow shadow-emerald-500/30' 
+                          : 'text-emerald-500 hover:bg-emerald-500/10'
+                      }`}
+                    >
+                      Dodaj znajomego
+                    </button>
                   </div>
+
+                  {/* Local filtering for existing friends */}
+                  {friendsSubTab === 'all' && friends.length > 0 && (
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder="Szukaj znajomego..."
+                        value={searchFilter}
+                        onChange={(e) => setSearchFilter(e.target.value)}
+                        className="bg-[#11131a] rounded-lg pl-8 pr-4 py-1.5 text-xs text-white placeholder-zinc-500 border border-zinc-800 focus:border-[var(--accent)] outline-none transition"
+                      />
+                      <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-500" />
+                    </div>
+                  )}
                 </div>
-                <div className="flex flex-col items-center justify-center py-20 text-center text-zinc-500">
-                  <Users size={48} className="mb-4" />
-                  <p className="text-sm">Brak aktywnych znajomych online.</p>
-                  <p className="text-xs mt-1">Użyj linku zaproszenia, aby kogoś dodać.</p>
-                </div>
+
+                {/* SUBTAB: ALL FRIENDS */}
+                {friendsSubTab === 'all' && (
+                  <div>
+                    {friends.length === 0 ? (
+                      <div className="flex flex-col items-center justify-center py-20 text-center text-zinc-500 bg-[#11131a]/30 border border-zinc-800/40 rounded-2xl p-6">
+                        <Users size={40} className="mb-4 text-zinc-600" />
+                        <p className="text-sm font-semibold text-zinc-400">Nikt tu jeszcze nie gra sam!</p>
+                        <p className="text-xs mt-1 text-zinc-500">Przejdź do zakładki "Dodaj znajomego", aby zaprosić kogoś do wspólnej gry.</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        {friends
+                          .filter(f => f.username.toLowerCase().includes(searchFilter.toLowerCase()))
+                          .map((friend) => (
+                            <div
+                              key={friend.id}
+                              className="flex items-center justify-between p-3.5 rounded-xl border border-zinc-800/50 bg-[#11131a]/20 hover:bg-[#11131a]/40 hover:border-zinc-700/60 transition group"
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className="relative">
+                                  <div className="h-10 w-10 rounded-full bg-zinc-800 overflow-hidden border border-zinc-700">
+                                    {friend.avatar_url ? (
+                                      <img src={friend.avatar_url} alt={friend.username} className="h-full w-full object-cover" />
+                                    ) : (
+                                      <div className="flex h-full w-full items-center justify-center text-sm font-bold text-white uppercase bg-zinc-700">
+                                        {friend.username[0]}
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-[var(--bg-primary)] bg-emerald-500" />
+                                </div>
+                                <div>
+                                  <h4 className="font-bold text-white text-sm flex items-center gap-1.5">
+                                    {friend.username.split('#')[0]}
+                                    <span className="text-zinc-500 font-normal text-xs">#{friend.username.split('#')[1] || '0000'}</span>
+                                    {friend.is_bot && (
+                                      <span className="text-[9px] bg-indigo-500/20 text-indigo-400 font-bold px-1 py-0.2 rounded border border-indigo-500/30">BOT</span>
+                                    )}
+                                  </h4>
+                                  <p className="text-[10px] text-emerald-500 font-semibold mt-0.5">Online</p>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-2">
+                                <button
+                                  className="p-2 bg-[var(--bg-secondary)] hover:bg-[var(--accent)] text-zinc-400 hover:text-white rounded-lg transition border border-zinc-800/80 hover:border-transparent"
+                                  title="Rozpocznij czat"
+                                >
+                                  <MessageSquare size={16} />
+                                </button>
+                                <button
+                                  onClick={() => handleDeclineRequest(friend.id)}
+                                  className="p-2 bg-[var(--bg-secondary)] hover:bg-red-500/10 text-zinc-400 hover:text-red-400 rounded-lg transition border border-zinc-800/80 hover:border-red-500/20"
+                                  title="Usuń ze znajomych"
+                                >
+                                  <UserX size={16} />
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* SUBTAB: PENDING REQUESTS */}
+                {friendsSubTab === 'pending' && (
+                  <div>
+                    {pendingRequests.length === 0 ? (
+                      <div className="flex flex-col items-center justify-center py-20 text-center text-zinc-500 bg-[#11131a]/30 border border-zinc-800/40 rounded-2xl p-6">
+                        <Clock size={40} className="mb-4 text-zinc-600" />
+                        <p className="text-sm font-semibold text-zinc-400">Brak oczekujących zaproszeń</p>
+                        <p className="text-xs mt-1 text-zinc-500">Kiedy wyślesz lub otrzymasz zaproszenie do znajomych, pojawi się ono tutaj.</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        {pendingRequests.map((req) => (
+                          <div
+                            key={req.id}
+                            className="flex items-center justify-between p-3.5 rounded-xl border border-zinc-800/50 bg-[#11131a]/20 hover:bg-[#11131a]/40 transition"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="h-10 w-10 rounded-full bg-zinc-800 overflow-hidden border border-zinc-700">
+                                {req.avatar_url ? (
+                                  <img src={req.avatar_url} alt={req.username} className="h-full w-full object-cover" />
+                                ) : (
+                                  <div className="flex h-full w-full items-center justify-center text-sm font-bold text-white uppercase bg-zinc-700">
+                                    {req.username[0]}
+                                  </div>
+                                )}
+                              </div>
+                              <div>
+                                <h4 className="font-bold text-white text-sm flex items-center gap-1.5">
+                                  {req.username.split('#')[0]}
+                                  <span className="text-zinc-500 font-normal text-xs">#{req.username.split('#')[1] || '0000'}</span>
+                                </h4>
+                                <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border mt-1.5 inline-block ${
+                                  req.status === 'pending_received'
+                                    ? 'bg-amber-500/10 border-amber-500/20 text-amber-400'
+                                    : 'bg-zinc-800 border-zinc-700 text-zinc-400'
+                                }`}>
+                                  {req.status === 'pending_received' ? 'Zaproszenie Otrzymane' : 'Zaproszenie Wysłane'}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                              {req.status === 'pending_received' ? (
+                                <>
+                                  <button
+                                    onClick={() => handleAcceptRequest(req.id)}
+                                    className="p-2 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-400 hover:text-white rounded-lg transition border border-emerald-500/20 hover:border-transparent"
+                                    title="Zaakceptuj zaproszenie"
+                                  >
+                                    <UserCheck size={16} />
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeclineRequest(req.id)}
+                                    className="p-2 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white rounded-lg transition border border-red-500/20 hover:border-transparent"
+                                    title="Odrzuć zaproszenie"
+                                  >
+                                    <UserX size={16} />
+                                  </button>
+                                </>
+                              ) : (
+                                <button
+                                  onClick={() => handleDeclineRequest(req.id)}
+                                  className="p-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white rounded-lg transition border border-zinc-700"
+                                  title="Anuluj zaproszenie"
+                                >
+                                  <UserX size={16} />
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* SUBTAB: ADD FRIEND SEARCH */}
+                {friendsSubTab === 'add' && (
+                  <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-200">
+                    <div className="bg-[#11131a]/40 border border-zinc-800/80 rounded-2xl p-5 space-y-4">
+                      <h4 className="text-sm font-bold text-white uppercase tracking-wide">Dodaj Znajomego</h4>
+                      <p className="text-xs text-zinc-500">Wyszukaj innego użytkownika po jego unikalnej nazwie gracza Rcord, aby wysłać zaproszenie.</p>
+                      
+                      <form onSubmit={handleSearchUsers} className="flex gap-2">
+                        <div className="relative flex-1">
+                          <input
+                            type="text"
+                            placeholder="Wpisz nazwę gracza (np. ipro)..."
+                            value={searchNickname}
+                            onChange={(e) => setSearchNickname(e.target.value)}
+                            className="w-full bg-[#11131a] rounded-lg pl-10 pr-4 py-2.5 text-sm text-white placeholder-zinc-500 border border-zinc-800 focus:border-[var(--accent)] outline-none transition"
+                          />
+                          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" />
+                        </div>
+                        <button
+                          type="submit"
+                          disabled={loadingSearch}
+                          className="bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-sm font-bold px-6 py-2.5 rounded-lg transition shadow shadow-indigo-600/30 disabled:opacity-50"
+                        >
+                          {loadingSearch ? 'Szukanie...' : 'Wyszukaj'}
+                        </button>
+                      </form>
+                    </div>
+
+                    {/* Search Results */}
+                    {searchResults.length > 0 && (
+                      <div className="space-y-2">
+                        <h4 className="text-xs font-bold text-zinc-500 uppercase tracking-wide px-1">Wyniki Wyszukiwania</h4>
+                        <div className="space-y-2">
+                          {searchResults.map((user) => {
+                            const isAlreadyFriend = friends.some(f => f.id === user.id);
+                            const isReqPending = pendingRequests.some(r => r.id === user.id);
+                            
+                            return (
+                              <div
+                                key={user.id}
+                                className="flex items-center justify-between p-3 rounded-xl border border-zinc-800/50 bg-[#11131a]/10 hover:bg-[#11131a]/20 transition"
+                              >
+                                <div className="flex items-center gap-3">
+                                  <div className="h-10 w-10 rounded-full bg-zinc-800 overflow-hidden border border-zinc-700">
+                                    {user.avatar_url ? (
+                                      <img src={user.avatar_url} alt={user.username} className="h-full w-full object-cover" />
+                                    ) : (
+                                      <div className="flex h-full w-full items-center justify-center text-sm font-bold text-white uppercase bg-zinc-700">
+                                        {user.username[0]}
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div>
+                                    <h4 className="font-bold text-white text-sm flex items-center gap-1.5">
+                                      {user.username.split('#')[0]}
+                                      <span className="text-zinc-500 font-normal text-xs">#{user.username.split('#')[1] || '0000'}</span>
+                                    </h4>
+                                  </div>
+                                </div>
+
+                                <div>
+                                  {isAlreadyFriend ? (
+                                    <span className="text-xs text-zinc-500 font-semibold px-3 py-1.5 rounded-lg bg-zinc-800 border border-zinc-700">
+                                      Jesteście znajomymi
+                                    </span>
+                                  ) : isReqPending ? (
+                                    <span className="text-xs text-zinc-500 font-semibold px-3 py-1.5 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center gap-1.5">
+                                      <Clock size={12} />
+                                      Oczekuje
+                                    </span>
+                                  ) : (
+                                    <button
+                                      onClick={() => handleSendFriendRequest(user.id)}
+                                      className="bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold px-4 py-2 rounded-lg transition shadow shadow-emerald-500/20 flex items-center gap-1.5"
+                                    >
+                                      <UserPlus size={12} />
+                                      Dodaj Znajomego
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
