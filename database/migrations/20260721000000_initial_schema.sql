@@ -430,8 +430,8 @@ create policy "Allow select channel members of own channels" on public.channel_m
 create policy "Allow insert channel members for own channels" on public.channel_members for insert to authenticated with check (true);
 create policy "Allow delete channel members" on public.channel_members for delete to authenticated using (user_id = auth.uid());
 
-create policy "Allow select own relationships" on public.relationships for select to authenticated using (user_id = auth.uid());
-create policy "Allow insert/update/delete own relationships" on public.relationships for all to authenticated using (user_id = auth.uid());
+create policy "Allow select relationships" on public.relationships for select to authenticated using (user_id = auth.uid() or friend_id = auth.uid());
+create policy "Allow insert/update/delete relationships" on public.relationships for all to authenticated using (user_id = auth.uid() or friend_id = auth.uid());
 
 -- RLS Policies for Roles & Category Permissions
 create policy "Allow select server roles" on public.server_roles for select to authenticated using (true);
