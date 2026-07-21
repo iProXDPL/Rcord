@@ -220,7 +220,9 @@ Serwery (gildie) i kontakty będą posiadały:
 - **Widoczność i blokada pisania w kanałach (Read-Only)**:
   - Kanały mogą być prywatne (wyświetlane tylko dla określonych ról posiadających uprawnienie `view_channel` w danej kategorii).
   - Kanały mogą być tylko do odczytu (blokada pisania dla standardowych użytkowników poprzez wyłączenie uprawnienia `send_messages` dla danej roli, przy zachowaniu uprawnień dla Administratorów/Moderatorów – idealne pod kanały typu `#regulamin`, `#ogloszenia`).
-- **Zaproszenia (Invite Links)**: Generowanie unikalnych linków do dołączania do serwerów. Oprócz tradycyjnego wklejania kodu w oknie dialogowym, Tauri zarejestruje systemowy protokół `rcord://` (np. `rcord://join/kod`). Kliknięcie takiego linku na stronie internetowej automatycznie uruchomi aplikację Rcord i dołączy gracza do serwera.
+- **Zaproszenia i Dodawanie Znajomych (Deep-linking `rcord://`)**: Generowanie unikalnych linków do dołączania do serwerów oraz profili. Tauri rejestruje systemowy protokół `rcord://`:
+  - `rcord://join/<code>` – automatycznie uruchamia aplikację i dołącza gracza do serwera (z pytaniem o potwierdzenie).
+  - `rcord://add/<username#tag>` – automatycznie otwiera profil użytkownika i wysyła mu zaproszenie do znajomych.
 - **Wyszukiwarkę serwerów publicznych**: Serwery oznaczone jako `is_public` będą widoczne dla wszystkich użytkowników w sekcji odkrywania.
 
 ### 6. Licencja
