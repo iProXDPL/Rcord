@@ -25,6 +25,7 @@ Zgodnie z wymaganiami, aplikacja będzie korzystać z następujących technologi
 
 ### 3. Komunikacja Głosowa & Wideo
 - **WebRTC (LiveKit)**: Do przesyłania wideo, dźwięku z mikrofonu oraz udostępniania ekranu. LiveKit oferuje stabilne SDK dla React i Rust.
+- **Adaptacyjny streaming wideo (Simulcast)**: Integracja z LiveKit obsługuje Simulcast – nadawca wysyła trzy wersje jakościowe strumienia (Low, Medium, High). Serwer LiveKit dynamicznie decyduje, którą wersję wysłać do danego odbiorcy na podstawie jego łącza oraz rozmiaru okna wideo na ekranie (np. smartfony odbierają wersję o niskim bitrate, oszczędzając baterię i transfer).
 - **Redukcja szumów (RNNoise)**: Zintegrowany filtr WASM RNNoise w AudioWorklet wewnątrz Webview (React), co gwarantuje spójne, ultra-lekkie działanie bez szumów tła na Windowsie, Linuksie i Androidzie.
 - **Metody Aktywacji Mikrofonu**:
   - **Aktywacja Głosowa (VAD - Voice Activity Detection)**: Automatyczne nadawanie po przekroczeniu progu decybeli.
