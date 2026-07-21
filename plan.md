@@ -161,7 +161,12 @@ Interfejs użytkownika będzie wzorowany na sprawdzonym i ergonomicznym układzi
 - **Autostart z systemem**: Wdrożymy integrację z wbudowanym w Tauri mechanizmem autostartu (`@tauri-apps/plugin-autostart`), umożliwiając użytkownikowi włączenie opcji "Uruchamiaj Rcord przy starcie systemu" z poziomu ustawień aplikacji (uruchamia się zminimalizowana w zasobniku).
 - **Zabezpieczenie przed wieloma instancjami (Single-Instance Guard)**: Zintegrujemy oficjalny plugin Tauri `@tauri-apps/plugin-single-instance`. Próba ponownego uruchomienia aplikacji przywróci i aktywuje (focus) istniejące już okno Rcord, co chroni sterowniki mikrofonu i głośników przed konfliktami sprzętowymi.
 - **Synchronizacja Stanu (Zustand Multi-Window Sync)**: Zarówno okno główne, jak i nakładka posiadają niezależne stany Zustand. Aby zapewnić natychmiastową synchronizację (np. wyciszenie mikrofonu, zmiana aktywnego pokoju głosowego, nowa wiadomość w czacie nakładki), wykorzystamy natywny autobus zdarzeń Tauri IPC (`emit` / `listen`), co eliminuje opóźnienia sieciowe i nie obciąża bazy danych.
-- Na **Androidzie** oraz w głównym oknie desktopowym skupiamy się na standardowym, dopracowanym interfejsie czatu.
+- Na **Androidzie**, w głównym oknie desktopowym oraz w **wersji przeglądarkowej (Web)** skupiamy się na standardowym, dopracowanym interfejsie czatu.
+- **Kompatybilność z przeglądarką internetową (Web version fallback)**:
+  - Kod frontendu (React) automatycznie wykrywa środowisko uruchomieniowe (czy działa w Tauri, czy w standardowej przeglądarce).
+  - W przeglądarce aplikacja pozwala na pełne logowanie, pisanie na czacie, wysyłanie plików, DMs, sklep oraz komunikację głosową/wideo (bezpośrednio przez webowe LiveKit WebRTC SDK).
+  - Funkcje czysto systemowe desktopowe (nakładka gry, globalne skróty, tray, autostart, skanowanie bibliotek gier) są w przeglądarce niewidoczne lub wyłączone.
+  - Powiadomienia w przeglądarce korzystają z Web Notifications API lub są realizowane wyłącznie przez odznaki (badges) i dźwięki wewnątrz aplikacji.
 - **Funkcje Okna Czatu**:
   - **Pełne wsparcie dla Markdown (MD)**: renderowanie pogrubień, kursywy, list, cytatów oraz bloków kodu z kolorowaniem składni (np. dla języków programowania).
   - **Automatyczne Embedy (Rich Embeds)**:
