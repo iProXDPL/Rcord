@@ -104,10 +104,15 @@ Interfejs użytkownika będzie wzorowany na sprawdzonym i ergonomicznym układzi
 4. **Pasek Członków (Rightmost Sidebar)** – **zwijany (collapsible)**:
    - Możliwość ukrycia/zwinięcia paska członków, aby powiększyć panel główny czatu.
    - Wyświetla listę członków serwera, którzy mają uprawnienia do wyświetlania obecnie wybranego kanału (filtrowanie na podstawie ról i uprawnień kanału), dzięki czemu użytkownicy czatu dokładnie wiedzą, kto ma dostęp do treści i widzi ich wiadomości. Członkowie są pogrupowani według ról lub statusu obecności (online, idle, dnd, offline) wraz z ich statusami aktywności w grach (Rich Presence).
-5. **System Powiadomień (Notifications)**:
+5. **System Powiadomień i Dźwięków (Notifications & UI Sounds)**:
    - **Odznaki (Badges)**: Ikony serwerów i kanałów wyświetlają licznik nieprzeczytanych wiadomości (czerwona odznaka z liczbą).
-   - **Natywne powiadomienia desktopowe**: Wykorzystanie Tauri Notification API do wyświetlania systemowych powiadomień push (popup OS) z dźwiękiem przy nowych wiadomościach, wzmianach (@mention) i zaproszeniach do znajomych.
-   - **Wyciszanie per kanał/serwer**: Użytkownik może wyciszyć powiadomienia dla konkretnego kanału lub całego serwera (mute), zachowując odznakę bez dźwięku, lub całkowicie ukryć powiadomienia.
+   - **Natywne powiadomienia desktopowe**: Wykorzystanie Tauri Notification API do wyświetlania systemowych powiadomień push (popup OS) przy nowych wiadomościach, wzmianach (@mention) i zaproszeniach do znajomych.
+   - **Systemowe Dźwięki UI**: Odtwarzanie dedykowanych plików dźwiękowych z katalogu [sound](file:///home/ipro/Github/Rcord/sound):
+     - Wyciszenie / odciszenie mikrofonu: odtwarzanie `microfon-mute.mp3`.
+     - Wyciszenie / odciszenie słuchawek (Deafen): odtwarzanie `headphones-mute.mp3`.
+     - Nowa wiadomość na aktywnym serwerze / kanale: odtwarzanie `Bip.mp3`.
+     - Nowa wiadomość prywatna (DM) lub bezpośrednia wzmianka (@mention): odtwarzanie `Bip-bip.mp3`.
+   - **Wyciszanie per kanał/serwer**: Użytkownik może wyciszyć powiadomienia dla konkretnego kanału lub całego serwera (mute), wyłączając dźwięki powiadomień i natywne popupy, pozostawiając jedynie dyskretne odznaki graficzne.
 6. **Rozbudowane Menu Kontekstowe (Context Menu)**:
    - **Desktop (PPM / Right-click)**: Kliknięcie prawym przyciskiem myszy na dowolny element interfejsu wyświetla rozbudowane menu kontekstowe z akcjami dostosowanymi do typu elementu:
      - **Wiadomość**: Odpowiedz, Reakcja, Edytuj (własna), Usuń, Przypnij, Kopiuj tekst, Kopiuj ID, Oznacz jako spoiler.
@@ -161,13 +166,18 @@ Interfejs użytkownika będzie wzorowany na sprawdzonym i ergonomicznym układzi
   - **Pełne wsparcie dla Markdown (MD)**: renderowanie pogrubień, kursywy, list, cytatów oraz bloków kodu z kolorowaniem składni (np. dla języków programowania).
   - **Automatyczne Embedy (Rich Embeds)**:
     - **YouTube**: Automatyczne renderowanie odtwarzacza wideo (iframe) pod wiadomością zawierającą link.
-    - **Twitter/X**: Podgląd tweetów i mediów (w tym wbudowany odtwarzacz wideo HTML5, który pozwala odtwarzać filmy z tweetów bezpośrednio w oknie czatu).
-    - **Obrazy i Gify**: Bezpośrednie wyświetlanie obrazków (png, jpg, webp, gif) przesłanych jako linki.
+    - **Twitter/X (fxtwitter/vxtwitter/fixupx)**: Podgląd tweetów i mediów (w tym automatyczna konwersja linków na fxtwitter/vxtwitter dla poprawnego generowania metadanych oraz wbudowany odtwarzacz wideo HTML5 bezpośrednio w oknie czatu).
+    - **Obrazy i Gify (Imgur & Direct Links)**: Bezpośrednie wyświetlanie obrazów (png, jpg, webp, gif) przesłanych jako linki oraz pełne wsparcie dla linków z imgur.com (automatyczne wyciąganie obrazka z karty embed).
     - **Inne linki (OpenGraph)**: Natywny kod Rust w Tauri pobiera metadane strony (tytuł, opis, miniatura), omijając zabezpieczenia CORS w przeglądarce, i przesyła je do frontendu React w celu wyświetlenia ramki podglądu.
-  - **Przesyłanie plików i programów (załączniki)**: 
+  - **Wklejanie ze schowka (Clipboard Paste)**:
+    - Czat w pełni obsługuje wklejanie tekstu oraz bezpośrednie wklejanie obrazów ze schowka systemowego (np. po wykonaniu zrzutu ekranu i naciśnięciu `Ctrl+V`). Wklejony obraz jest automatycznie przekształcany w załącznik i pokazywany jako podgląd przed wysłaniem.
+  - **Przesyłanie plików, programów oraz podgląd kodu/tekstu**: 
     - Pliki (dokumenty, archiwum `.zip`, instalatory `.exe`/`.deb` itp.) o rozmiarze do **50 MB** są przesyłane bezpośrednio do **Supabase Storage** (bucket `attachments`).
     - Zabezpieczenie limitu 50 MB oraz uprawnienia są egzekwowane bezpośrednio na serwerze Supabase za pomocą polityk SQL RLS, co uniemożliwia obejście limitów.
-    - Na czacie wyświetla się elegancka karta załącznika pokazująca nazwę pliku, rozmiar, ikonę rozszerzenia oraz przycisk do pobrania. Obrazy i pliki wideo mają automatyczny podgląd (preview) wewnątrz czatu.
+    - Na czacie wyświetla się elegancka karta załącznika. 
+    - **Pliki kodu / programu (np. `test.py`, `app.js`, `.json`)**: Automatycznie renderują małe, scrollowalne okno podglądu z kolorowaniem składni dla danego języka programowania oraz ikonką pobierania pliku.
+    - **Pliki tekstowe (`.txt`)**: Renderują podobne, małe, scrollowalne okienko z podglądem zawartości, ale bez kolorowania (uproszczony widok tekstowy), z ikonką pobierania pliku.
+    - Obrazy i pliki wideo mają automatyczny pełny podgląd (preview) wewnątrz czatu.
   - **Wyszukiwarka wiadomości z filtrami**:
     - Wyszukiwanie pełnotekstowe (Full Text Search) zintegrowane w bazie PostgreSQL (za pomocą kolumny `fts_search_vector` i szybkiego indeksu GIN), co pozwala na błyskawiczne przeszukiwanie historii czatu.
     - Obsługa filtrów wyszukiwania (np. `has:link` dla wiadomości zawierających linki URL, `has:image` dla wiadomości z obrazami, oraz `has:file` dla wiadomości z plikami załączników).
@@ -204,6 +214,7 @@ Interfejs użytkownika będzie wzorowany na sprawdzonym i ergonomicznym układzi
   - **Discord Auth**
 - **Generator Nazw z Tagiem (`name#1234`)**: Przy rejestracji system automatycznie przydziela 4-cyfrowy unikalny identyfikator (tag) oddzielony znakiem `#` (np. `ipro#9482`). Pozwala to na powtarzanie się samych nazw użytkowników, zachowując unikalność w bazie, dokładnie tak jak na Discordzie.
 - **Możliwość Zmiany Tagu**: Użytkownik może ręcznie zmienić swój tag na własny (np. literowy `#PSK` lub `#GAME`), pod warunkiem, że kombinacja `nowa_nazwa#nowy_tag` jest wolna w bazie. Tag musi być alfanumeryczny i mieć długość **od 2 do 5 znaków**.
+- **Oznaczenie kont botów (Emblemat BOT)**: Każde konto typu bot (stworzone przez użytkowników/programistów w zakładce Developer) posiada w interfejsie niebieski emblemat `BOT` obok nazwy użytkownika (w wiadomościach, na liście członków serwera, na liście znajomych oraz w oknach profilu), aby zapobiec podszywaniu się pod prawdziwych użytkowników.
 - **Śledzenie Statusu Aktywności (Supabase Realtime Presence)**: Do rozsyłania statusów obecności wykorzystamy wbudowany mechanizm **Supabase Presence** działający w pamięci RAM serwera Realtime. Pozwala to na śledzenie obecności w czasie rzeczywistym bez generowania zapisów do bazy danych. Dostępne statusy:
   - **Online** – ustawiany automatycznie po zalogowaniu.
   - **Idle (Zaraz wracam)** – ustawiany automatycznie po kilku minutach bezczynności systemowej (brak ruchu myszy/klawiatury, wykrywane przez Tauri).
@@ -267,6 +278,10 @@ Tauri w Rust będzie monitorować uruchomione procesy gier na podstawie **statyc
 ### 5. Struktura Serwerów, Kanałów i Relacji
 Serwery (gildie) i kontakty będą posiadały:
 - **Kanały i Kategorie (Grupy kanałów)** na serwerach z możliwością **przeciągania i upuszczania (Drag and Drop)** w celu zmiany ich kolejności (za pomocą biblioteki `dnd-kit`). Zmiany są przesyłane do bazy danych zbiorczym zapytaniem przez procedury RPC (`update_channel_positions` oraz `update_category_positions`), aby uniknąć zbędnych zapytań i opóźnień sieciowych.
+- **Przenoszenie użytkowników między kanałami głosowymi**: Administratorzy oraz użytkownicy posiadający uprawnienie `move_members` mogą przeciągać i upuszczać (drag and drop) użytkowników przebywających na kanale głosowym na inny kanał głosowy na tym samym serwerze. Działa to również na kanałach, które są niewidoczne/ukryte dla danego administratora (bypass RLS / uprawnień do widoczności w celu pełnego nadzoru moderatorskiego).
+- **Aktywności na kanałach głosowych (Post-MVP/Dodatki)**:
+  - **Wspólna tablica (Whiteboard)**: Uczestnicy mogą rysować w czasie rzeczywistym na interaktywnej tablicy.
+  - **Wspólne oglądanie (Watch Together)**: Zsynchronizowany odtwarzacz wideo (np. dla filmów z YouTube) umożliwiający jednoczesne oglądanie, z systemem uprawnień określających kto może zaczynać, pauzować, wznawiać, przewijać lub zmieniać odtwarzane wideo.
 - **Rozmowy Prywatne (DMs)** oraz **Grupowe Rozmowy Prywatne (Group DMs)**: Komunikacja poza serwerami, zintegrowana w tych samych tabelach wiadomości dzięki relacji z `channel_members` (kiedy `server_id` jest puste).
 - **Lista Znajomych (Friends List)** i system relacji: wysyłanie zaproszeń do znajomych przy użyciu pełnego tagu (np. `friend#1122`), statusy: znajomi, zablokowani, oczekujące.
 - **Zaawansowane Uprawnienia, Role i Bezpieczeństwo RLS**: 
