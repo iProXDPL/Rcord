@@ -111,6 +111,7 @@ graph TD
 ### 4. Nakładka (Overlay) i wersja Mobilna
 - **Nakładka (Overlay)** będzie działać **tylko na komputerach stacjonarnych (Windows, Linux)**.
 - **Ikona w zasobniku systemowym (System Tray)**: Aplikacja Tauri na desktopie zaimplementuje ikonę w trayu z menu kontekstowym (Przywróć / Wyjdź). Kliknięcie przycisku [X] zamykającego okno główne nie zamyka aplikacji, lecz ukrywa ją w tle, co pozwala na nieprzerwane korzystanie z połączenia głosowego i overlay podczas grania.
+- **Autostart z systemem**: Wdrożymy integrację z wbudowanym w Tauri mechanizmem autostartu (`@tauri-apps/plugin-autostart`), umożliwiając użytkownikowi włączenie opcji "Uruchamiaj Rcord przy starcie systemu" z poziomu ustawień aplikacji (uruchamia się zminimalizowana w zasobniku).
 - **Synchronizacja Stanu (Zustand Multi-Window Sync)**: Zarówno okno główne, jak i nakładka posiadają niezależne stany Zustand. Aby zapewnić natychmiastową synchronizację (np. wyciszenie mikrofonu, zmiana aktywnego pokoju głosowego, nowa wiadomość w czacie nakładki), wykorzystamy natywny autobus zdarzeń Tauri IPC (`emit` / `listen`), co eliminuje opóźnienia sieciowe i nie obciąża bazy danych.
 - Na **Androidzie** oraz w głównym oknie desktopowym skupiamy się na standardowym, dopracowanym interfejsie czatu.
 - **Funkcje Okna Czatu**:
