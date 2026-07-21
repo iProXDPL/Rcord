@@ -93,6 +93,8 @@ Interfejs użytkownika będzie wzorowany na sprawdzonym i ergonomicznym układzi
    - Wsparcie dla **Drag and Drop** do zmiany kolejności ikon serwerów oraz **tworzenia folderów serwerów** (przeciągnięcie ikony na ikonę tworzy folder z możliwością zwijania/rozwijania). Stan układu serwerów użytkownika jest zapisywany w bazie danych (`profiles.server_layout`).
 2. **Pasek Kanałów i Kategorii (Middle-Left Sidebar)** – **zwijany (collapsible)**:
    - Możliwość ukrycia/zwinięcia paska kanałów, aby powiększyć panel główny czatu (np. podczas grania w szachy lub przeglądania pełnoekranowego wideo).
+   - **Nagłówek serwera (góra paska)**: Nazwa serwera z ikoną rozwijania – kliknięcie otwiera menu kontekstowe z opcjami: Ustawienia serwera, Tworzenie kanału, Tworzenie kategorii, Zaproszenia, Powiadomienia.
+   - **Wydarzenia serwerowe (Server Events)**: Sekcja wyświetlana nad listą kanałów. Administratorzy mogą tworzyć wydarzenia (nazwa, opis, data/godzina rozpoczęcia, opcjonalny kanał głosowy). Członkowie serwera widzą nadchodzące wydarzenia i mogą zaznaczyć "Zainteresowany" (tabela `server_events`).
    - Wyświetla kategorie i kanały (tekstowe oraz głosowe) aktywnego serwera (lub listę kontaktów DMs w widoku Home).
    - Dolna karta profilu użytkownika: Awatar (ze wsparciem GIF), nazwa użytkownika z tagiem, oraz przyciski kontrolne: wyciszenie mikrofonu (Mute) i wyciszenie dźwięku (Deafen).
    - Dostęp do panelu Soundboardu po dołączeniu do kanału głosowego.

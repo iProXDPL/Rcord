@@ -135,6 +135,31 @@ create table public.server_bans (
 
 alter table public.server_bans enable row level security;
 
+-- 6c. Server Events
+create table public.server_events (
+    id uuid primary key default gen_random_uuid(),
+    server_id uuid references public.servers(id) on delete cascade not null,
+    created_by uuid references public.profiles(id) on delete set null,
+    name text not null,
+    description text,
+    voice_channel_id uuid references public.channels(id) on delete set null,
+    starts_at timestamp with time zone not null,
+    ends_at timestamp with time zone,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+alter table public.server_events enable row level security;
+
+-- 6d. Server Event Interests (kto jest zainteresowany)
+create table public.server_event_interests (
+    event_id uuid references public.server_events(id) on delete cascade not null,
+    user_id uuid references public.profiles(id) on delete cascade not null,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+    primary key (event_id, user_id)
+);
+
+alter table public.server_event_interests enable row level security;
+
 -- 7. Messages
 create table public.messages (
     id uuid primary key default gen_random_uuid(),
