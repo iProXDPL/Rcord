@@ -72,8 +72,10 @@ export const MainLayout: React.FC = () => {
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[var(--bg-primary)]">
-      {/* Column 1: Server Navigation Sidebar */}
-      <ServerSidebar onAddServerClick={() => setIsAddServerOpen(true)} />
+      <ServerSidebar
+        onAddServerClick={() => setIsAddServerOpen(true)}
+        onUserSettingsClick={() => setIsUserSettingsOpen(true)}
+      />
 
       {/* Column 2: Channel Sidebar (Collapsible) */}
       <ChannelSidebar

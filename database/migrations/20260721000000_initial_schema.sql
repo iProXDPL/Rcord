@@ -297,6 +297,24 @@ create or replace trigger on_auth_user_created
     after insert on auth.users
     for each row execute procedure public.handle_new_user();
 
+create or replace function public.handle_update_user()
+returns trigger as $$
+begin
+    update public.profiles
+    set 
+        avatar_url = coalesce(new.raw_user_meta_data->>'avatar_url', profiles.avatar_url),
+        banner_url = coalesce(new.raw_user_meta_data->>'banner_url', profiles.banner_url)
+    where id = new.id;
+    return new;
+end;
+$$ language plpgsql security definer;
+
+create or replace trigger on_auth_user_updated
+    after update on auth.users
+    for each row
+    when (old.raw_user_meta_data is distinct from new.raw_user_meta_data)
+    execute procedure public.handle_update_user();
+
 -- Simple RLS Policies (allows authenticated users full read/write for now, to be locked down per server permissions in later migrations)
 create policy "Allow read access to profiles for all authenticated" on public.profiles for select to authenticated using (true);
 create policy "Allow update access to own profile" on public.profiles for update to authenticated using (auth.uid() = id);

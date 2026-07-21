@@ -1,13 +1,16 @@
 import React from 'react';
 import { useServerStore } from '../../stores/serverStore';
+import { useAuthStore } from '../../stores/authStore';
 import { Plus, Home, Compass } from 'lucide-react';
 
 interface ServerSidebarProps {
   onAddServerClick: () => void;
+  onUserSettingsClick: () => void;
 }
 
-export const ServerSidebar: React.FC<ServerSidebarProps> = ({ onAddServerClick }) => {
+export const ServerSidebar: React.FC<ServerSidebarProps> = ({ onAddServerClick, onUserSettingsClick }) => {
   const { servers, activeServerId, setActiveServerId } = useServerStore();
+  const { profile } = useAuthStore();
 
   return (
     <div className="flex h-full w-[72px] flex-col items-center gap-1.5 bg-[var(--bg-primary)] py-3 text-zinc-400 border-r border-[var(--border-color)]">
@@ -92,6 +95,26 @@ export const ServerSidebar: React.FC<ServerSidebarProps> = ({ onAddServerClick }
         title="Odkrywaj publiczne serwery"
       >
         <Compass size={24} />
+      </button>
+
+      <div className="h-[2px] w-8 rounded bg-[var(--border-color)] my-1" />
+
+      {/* User Profile Avatar Card */}
+      <button
+        onClick={onUserSettingsClick}
+        className="group relative flex h-12 w-12 items-center justify-center rounded-[24px] hover:rounded-[16px] transition-all duration-200 bg-[var(--bg-tertiary)] border border-[var(--border-color)] overflow-hidden"
+        title="Ustawienia użytkownika"
+      >
+        {profile?.avatar_url ? (
+          <img src={profile.avatar_url} alt="Profil" className="h-full w-full object-cover" />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-sm font-bold text-white uppercase bg-zinc-700">
+            {profile?.username ? profile.username[0] : '?'}
+          </div>
+        )}
+        {profile && (
+          <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-[var(--bg-primary)] bg-emerald-500" />
+        )}
       </button>
     </div>
   );

@@ -57,9 +57,6 @@ export const ChannelSidebar: React.FC<ChannelSidebarProps> = ({
   const handleDeafenToggle = () => {
     const nextDeafen = !isDeafened;
     setIsDeafened(nextDeafen);
-    if (nextDeafen) {
-      setIsMicMuted(true);
-    }
     // Play headphone mute/deafen sound
     const audio = new Audio('/sound/headphones-mute.mp3');
     audio.play().catch(() => {});
