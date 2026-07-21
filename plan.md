@@ -172,7 +172,7 @@ Tauri w Rust będzie monitorować uruchomione procesy gier na podstawie **statyc
 
 ### 5. Struktura Serwerów, Kanałów i Relacji
 Serwery (gildie) i kontakty będą posiadały:
-- **Kanały i Kategorie (Grupy kanałów)** na serwerach.
+- **Kanały i Kategorie (Grupy kanałów)** na serwerach z możliwością **przeciągania i upuszczania (Drag and Drop)** w celu zmiany ich kolejności (za pomocą biblioteki `dnd-kit`). Zmiany są przesyłane do bazy danych zbiorczym zapytaniem przez procedury RPC (`update_channel_positions` oraz `update_category_positions`), aby uniknąć zbędnych zapytań i opóźnień sieciowych.
 - **Rozmowy Prywatne (DMs)** oraz **Grupowe Rozmowy Prywatne (Group DMs)**: Komunikacja poza serwerami, zintegrowana w tych samych tabelach wiadomości dzięki relacji z `channel_members` (kiedy `server_id` jest puste).
 - **Lista Znajomych (Friends List)** i system relacji: wysyłanie zaproszeń do znajomych przy użyciu pełnego tagu (np. `friend#1122`), statusy: znajomi, zablokowani, oczekujące.
 - **Zaawansowane Uprawnienia i Role**: Użytkownicy mogą posiadać wiele ról (np. Administrator, Moderator, Gracz), z których każda ma określony zestaw uprawnień. Kategorie kanałów mogą nadpisywać uprawnienia ról (overrides).

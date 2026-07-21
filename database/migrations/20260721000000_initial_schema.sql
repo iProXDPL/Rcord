@@ -419,6 +419,37 @@ create or replace trigger on_voice_state_left
     after delete or update on public.voice_states
     for each row execute procedure public.handle_temporary_channels_cleanup();
 
+-- Batch update channel positions
+create or replace function public.update_channel_positions(p_positions jsonb)
+returns void as $$
+declare
+    v_item jsonb;
+begin
+    for v_item in select * from jsonb_array_elements(p_positions)
+    loop
+        update public.channels
+        set position = (v_item->>'position')::integer
+        where id = (v_item->>'id')::uuid;
+    end loop;
+end;
+$$ language plpgsql security definer;
+
+-- Batch update category positions
+create or replace function public.update_category_positions(p_positions jsonb)
+returns void as $$
+declare
+    v_item jsonb;
+begin
+    for v_item in select * from jsonb_array_elements(p_positions)
+    loop
+        update public.channel_categories
+        set position = (v_item->>'position')::integer
+        where id = (v_item->>'id')::uuid;
+    end loop;
+end;
+$$ language plpgsql security definer;
+
+
 
 
 
