@@ -88,9 +88,8 @@ graph TD
 ### 1. Centrum Gier i naliczanie punktów
 - Wdrożymy **oba rozwiązania**:
   - **Gry wbudowane (React/HTML5)**:
-    - **Saper (Minesweeper)** i **Snake**: Gry jednoosobowe, naliczanie punktów za ukończone gry / długość węża (zabezpieczenie przed botami na punkty).
-    - **Szachy (Chess)**: Gra wieloosobowa PvP online. Gracz może wysłać na wybranym kanale czatu kartę wyzwania ("Chcę zagrać w szachy!"). Dowolny inny użytkownik na kanale klika "Dołącz", co inicjuje mecz PvP synchronizowany w czasie rzeczywistym przez Supabase Realtime (z zegarami gry).
-    - Punkty są przyznawane za wygraną (więcej) i przegraną (mniej).
+    - **Saper (Minesweeper)** i **Snake**: Gry jednoosobowe. Naliczanie punktów za wygrane lub długość węża jest walidowane po stronie bazy danych (Sanity Checks). Baza weryfikuje stosunek czasu gry do zdobytych punktów i liczby ruchów (np. odrzuca nienaturalnie wysokie wyniki zdobyte w bardzo krótkim czasie, co uniemożliwia proste oszukiwanie przez konsolę przeglądarki).
+    - **Szachy (Chess)**: Gra wieloosobowa PvP online. Gracz wysyła kartę wyzwania na czat, inny dołącza. Ruchy są synchronizowane przez Supabase Realtime. Punkty są przydzielane automatycznie po zakończeniu gry: zwycięzca (50 pkt), przegrany (15 pkt), remis (25 pkt).
   - **Wykrywanie gier w tle**: Aplikacja Tauri na desktopie będzie monitorować aktywne procesy gier i naliczać punkty za sam czas spędzony w grze.
 
 ### 2. System Tworzenia Botów
