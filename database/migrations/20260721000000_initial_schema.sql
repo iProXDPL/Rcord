@@ -8,6 +8,7 @@ create table public.profiles (
     id uuid references auth.users on delete cascade primary key,
     username text unique not null,
     avatar_url text,
+    banner_url text,
     points integer default 0 check (points >= 0),
     current_theme text default 'dark',
     current_accent text default 'purple',
@@ -278,11 +279,12 @@ begin
         end if;
     end loop;
 
-    insert into public.profiles (id, username, avatar_url, birthdate, is_bot)
+    insert into public.profiles (id, username, avatar_url, banner_url, birthdate, is_bot)
     values (
         new.id,
         v_final_username,
         new.raw_user_meta_data->>'avatar_url',
+        new.raw_user_meta_data->>'banner_url',
         (new.raw_user_meta_data->>'birthdate')::date,
         coalesce((new.raw_user_meta_data->>'is_bot')::boolean, false)
     );
