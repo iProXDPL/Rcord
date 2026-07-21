@@ -192,7 +192,9 @@ Serwery (gildie) i kontakty będą posiadały:
 - **Kanały i Kategorie (Grupy kanałów)** na serwerach z możliwością **przeciągania i upuszczania (Drag and Drop)** w celu zmiany ich kolejności (za pomocą biblioteki `dnd-kit`). Zmiany są przesyłane do bazy danych zbiorczym zapytaniem przez procedury RPC (`update_channel_positions` oraz `update_category_positions`), aby uniknąć zbędnych zapytań i opóźnień sieciowych.
 - **Rozmowy Prywatne (DMs)** oraz **Grupowe Rozmowy Prywatne (Group DMs)**: Komunikacja poza serwerami, zintegrowana w tych samych tabelach wiadomości dzięki relacji z `channel_members` (kiedy `server_id` jest puste).
 - **Lista Znajomych (Friends List)** i system relacji: wysyłanie zaproszeń do znajomych przy użyciu pełnego tagu (np. `friend#1122`), statusy: znajomi, zablokowani, oczekujące.
-- **Zaawansowane Uprawnienia i Role**: Użytkownicy mogą posiadać wiele ról (np. Administrator, Moderator, Gracz), z których każda ma określony zestaw uprawnień. Kategorie kanałów mogą nadpisywać uprawnienia ról (overrides).
+- **Zaawansowane Uprawnienia, Role i Bezpieczeństwo RLS**: 
+  - Użytkownicy mogą posiadać wiele ról (np. Administrator, Moderator, Gracz), z których każda ma określony zestaw uprawnień. Kategorie kanałów mogą nadpisywać uprawnienia ról (overrides).
+  - Wszystkie tabele w bazie danych (a w szczególności wiadomości `messages` i dane kanałów `channels`) posiadają restrykcyjne reguły **Row Level Security (RLS)**. Ponieważ Supabase Realtime integruje się natywnie z RLS, każda subskrypcja czasu rzeczywistego (np. nasłuchiwanie nowych wiadomości w kanale tekstowym lub DM) jest filtrowana po stronie bazy danych. Uniemożliwia to podsłuchiwanie rozmów przez osoby nieuprawnione.
 - **Widoczność i blokada pisania w kanałach (Read-Only)**:
   - Kanały mogą być prywatne (wyświetlane tylko dla określonych ról posiadających uprawnienie `view_channel` w danej kategorii).
   - Kanały mogą być tylko do odczytu (blokada pisania dla standardowych użytkowników poprzez wyłączenie uprawnienia `send_messages` dla danej roli, przy zachowaniu uprawnień dla Administratorów/Moderatorów – idealne pod kanały typu `#regulamin`, `#ogloszenia`).
