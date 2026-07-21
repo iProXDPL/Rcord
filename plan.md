@@ -82,6 +82,9 @@ graph TD
   - **Przesyłanie plików i programów (załączniki)**: 
     - Pliki (dokumenty, archiwum `.zip`, instalatory `.exe`/`.deb` itp.) o rozmiarze do **50 MB** są przesyłane bezpośrednio do **Supabase Storage** (bucket `attachments`).
     - Na czacie wyświetla się elegancka karta załącznika pokazująca nazwę pliku, rozmiar, ikonę rozszerzenia oraz przycisk do pobrania. Obrazy i pliki wideo mają automatyczny podgląd (preview) wewnątrz czatu.
+  - **Wyszukiwarka wiadomości z filtrami**:
+    - Wyszukiwanie pełnotekstowe (Full Text Search) zintegrowane w bazie PostgreSQL (za pomocą kolumny `fts_search_vector` i szybkiego indeksu GIN), co pozwala na błyskawiczne przeszukiwanie historii czatu.
+    - Obsługa filtrów wyszukiwania (np. `has:link` dla wiadomości zawierających linki URL, `has:image` dla wiadomości z obrazami, oraz `has:file` dla wiadomości z plikami załączników).
 
 ### 4. Tymczasowe Kanały i Uprawnienia
 - System uprawnień na serwerach będzie kontrolować tworzenie kanałów.

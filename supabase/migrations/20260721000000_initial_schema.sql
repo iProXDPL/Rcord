@@ -119,10 +119,14 @@ create table public.messages (
     user_id uuid references public.profiles(id) on delete set null,
     content text,
     embeds jsonb default '[]'::jsonb,
+    fts_search_vector tsvector generated always as (to_tsvector('english', coalesce(content, ''))) stored,
     created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
 alter table public.messages enable row level security;
+
+-- Create GIN index for full-text search on messages
+create index messages_fts_idx on public.messages using gin(fts_search_vector);
 
 -- 8. Shop Items
 create table public.shop_items (
