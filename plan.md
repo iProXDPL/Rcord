@@ -26,7 +26,9 @@ Zgodnie z wymaganiami, aplikacja będzie korzystać z następujących technologi
 ### 3. Komunikacja Głosowa & Wideo
 - **WebRTC (LiveKit)**: Do przesyłania wideo, dźwięku z mikrofonu oraz udostępniania ekranu. LiveKit oferuje stabilne SDK dla React i Rust.
 - **Adaptacyjny streaming wideo (Simulcast)**: Integracja z LiveKit obsługuje Simulcast – nadawca wysyła trzy wersje jakościowe strumienia (Low, Medium, High). Serwer LiveKit dynamicznie decyduje, którą wersję wysłać do danego odbiorcy na podstawie jego łącza oraz rozmiaru okna wideo na ekranie (np. smartfony odbierają wersję o niskim bitrate, oszczędzając baterię i transfer).
-- **Redukcja szumów (RNNoise)**: Zintegrowany filtr WASM RNNoise w AudioWorklet wewnątrz Webview (React), co gwarantuje spójne, ultra-lekkie działanie bez szumów tła na Windowsie, Linuksie i Androidzie.
+- **Przetwarzanie audio i redukcja szumów (RNNoise, AEC, AGC)**:
+  - Zintegrowany filtr WASM RNNoise w AudioWorklet wewnątrz Webview (React), co gwarantuje spójne, ultra-lekkie działanie bez szumów tła na Windowsie, Linuksie i Androidzie. Użytkownik może go włączyć/wyłączyć jednym przyciskiem w ustawieniach.
+  - Wykorzystamy wbudowane w przeglądarkowy standard WebRTC filtry **AEC (Acoustic Echo Cancellation - kasowanie echa)** oraz **AGC (Automatic Gain Control - automatyczna kontrola głośności)**, które będą aktywne domyślnie, aby zapobiec powstawaniu sprzężeń i echa (szczególnie u osób korzystających z głośników zamiast słuchawek).
 - **Metody Aktywacji Mikrofonu**:
   - **Aktywacja Głosowa (VAD - Voice Activity Detection)**: Automatyczne nadawanie po przekroczeniu progu decybeli.
   - **Naciśnij i Mów (PTT - Push-to-Talk)**: Nadawanie po wciśnięciu klawisza. Na desktopie Tauri rejestruje globalny skrót klawiszowy w Rust (używając `@tauri-apps/plugin-global-shortcut`), dzięki czemu klawisz działa podczas grania w gry w tle.
