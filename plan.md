@@ -91,14 +91,16 @@ Interfejs użytkownika będzie wzorowany na sprawdzonym i ergonomicznym układzi
    - Górny przycisk **Home**: Prowadzi do widoku prywatnego (prywatne wiadomości DMs, lista znajomych, sklep z kosmetykami, ekwipunek użytkownika).
    - Lista ikon dołączonych serwerów (gildii).
    - Wsparcie dla **Drag and Drop** do zmiany kolejności ikon serwerów oraz **tworzenia folderów serwerów** (przeciągnięcie ikony na ikonę tworzy folder z możliwością zwijania/rozwijania). Stan układu serwerów użytkownika jest zapisywany w bazie danych (`profiles.server_layout`).
-2. **Pasek Kanałów i Kategorii (Middle-Left Sidebar)**:
+2. **Pasek Kanałów i Kategorii (Middle-Left Sidebar)** – **zwijany (collapsible)**:
+   - Możliwość ukrycia/zwinięcia paska kanałów, aby powiększyć panel główny czatu (np. podczas grania w szachy lub przeglądania pełnoekranowego wideo).
    - Wyświetla kategorie i kanały (tekstowe oraz głosowe) aktywnego serwera (lub listę kontaktów DMs w widoku Home).
    - Dolna karta profilu użytkownika: Awatar (ze wsparciem GIF), nazwa użytkownika z tagiem, oraz przyciski kontrolne: wyciszenie mikrofonu (Mute) i wyciszenie dźwięku (Deafen).
    - Dostęp do panelu Soundboardu po dołączeniu do kanału głosowego.
    - **Niezależne wątki (Multitasking)**: Użytkownik może przebywać na kanale głosowym i jednocześnie przeglądać oraz pisać na dowolnym kanale tekstowym (lub przeglądać sklep/znajomych) bez rozłączania rozmowy.
 3. **Panel Główny (Center Active View)**:
    - Wyświetla zawartość wybranego kanału tekstowego (okno czatu z historią wiadomości, spoilerami, rich embedami), widok pokoju głosowego (siatka uczestników z wideo/ekranem) lub widok domowy (sklep, znajomi itp.).
-4. **Pasek Członków (Rightmost Sidebar)**:
+4. **Pasek Członków (Rightmost Sidebar)** – **zwijany (collapsible)**:
+   - Możliwość ukrycia/zwinięcia paska członków, aby powiększyć panel główny czatu.
    - Wyświetla listę członków serwera, którzy mają uprawnienia do wyświetlania obecnie wybranego kanału (filtrowanie na podstawie ról i uprawnień kanału), dzięki czemu użytkownicy czatu dokładnie wiedzą, kto ma dostęp do treści i widzi ich wiadomości. Członkowie są pogrupowani według ról lub statusu obecności (online, idle, dnd, offline) wraz z ich statusami aktywności w grach (Rich Presence).
 
 ---
