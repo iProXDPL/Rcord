@@ -169,9 +169,10 @@ Tauri w Rust będzie monitorować uruchomione procesy gier na podstawie **statyc
 - **Zabezpieczenie anty-AFK**: Punkty są naliczane wyłącznie wtedy, gdy gra jest oknem **aktywnym (w focusie)**, a użytkownik wykazuje aktywność systemową (brak bezczynności).
 
 ### 4. Estetyka, Motywy i Sklep
-- **Sklep z przedmioatmi kosmetycznymi**:
+- **Sklep z przedmiotami kosmetycznymi**:
   - Kupowane za punkty zebrane z aktywności w grach.
-  - **Awatary i obramowania profile**: Unikalne animowane obramowania wokół awatara użytkownika (np. neonowy styl Cyberpunk).
+  - **Awatary i obramowania profili**: Unikalne animowane obramowania wokół awatara użytkownika (np. neonowy styl Cyberpunk).
+  - **Animowane profile i ikony serwerów (GIF support)**: Zarówno awatar użytkownika (`avatar_url`), jak i ikona serwera (`icon_url`) mogą być plikami GIF, co pozwala na animowane profile wyróżniające użytkowników i serwery społecznościowe.
   - **Motywy aplikacji (Themes)**: Ciemne, jasne oraz customowe motywy interfejsu (np. styl retro, cyberpunk).
   - **Skórki i motywy do gier (Game Skins & Themes)**: Dodatkowe zestawy grafik dla bierek szachowych (np. styl pixelart, neon, fantasy), plansz szachowych, a także alternatywne motywy wizualne dla Sapera i Snake'a.
 - **Własne emotki serwera (Custom Server Emojis) i Limity**:
@@ -184,8 +185,16 @@ Tauri w Rust będzie monitorować uruchomione procesy gier na podstawie **statyc
   - Dźwięki są odtwarzane w czasie rzeczywistym przez WebRTC (LiveKit DataChannel).
   - Limit dźwięków może zostać zwiększony w przypadku wspierania serwera.
 - **Rola Globalnego Administratora Rcord (Admin Dashboard)**:
-  - Super-administratorzy Rcord posiadają dostęp do specjalnego panelu administracyjnego (Dashboard).
-  - Mogą ręcznie modyfikować limity emotek/dźwięków poszczególnych serwerów w bazie danych oraz zarządzać statusami wspierających i banami.
+  - Super-administratorzy Rcord posiadają dostęp do specjalnego panelu administracyjnego (Dashboard) z osobną stroną logowania.
+  - Mogą przeglądać listę serwerów, użytkowników i zgłoszeń, a także zawieszać lub usuwać serwery propagujące nienawiść, treści nielegalne (np. nazistowskie symbole) lub łamiące regulamin.
+  - Posiadają uprawnienia do ręcznej modyfikacji limitów emotek/dźwięków poszczególnych serwerów w bazie danych oraz nadawania statusów wspierających (boosterów).
+- **Spojlery (Spoilers) w czacie**:
+  - Tekst zawarty w znacznikach `||tekst||` jest ukrywany jako spojler i ujawnia się dopiero po kliknięciu przez użytkownika.
+  - Pliki i obrazy przesłane z flagą spojlera mają zamazany podgląd (blur) w oknie czatu, dopóki użytkownik ich nie kliknie.
+- **Kanały NSFW (Not Safe For Work) i Weryfikacja Wieku**:
+  - Kanały mogą być oznaczone jako NSFW (`is_nsfw = true`).
+  - Osoby poniżej 18 roku życia (obliczane na podstawie daty urodzenia `birthdate` podanej przy rejestracji) nie mają możliwości wejścia ani przeglądania zawartości kanałów NSFW.
+  - Użytkownicy pełnoletni wchodzący na kanał NSFW po raz pierwszy muszą wyrazić zgodę w dedykowanym dialogu ostrzegawczym ("Ten kanał zawiera treści przeznaczone wyłącznie dla dorosłych...").
 - **Tester Mikrofonu w Ustawieniach**: W sekcji ustawień dźwięku zaimplementujemy wizualny wskaźnik poziomu głośności (input volume meter). Użytkownik będzie mógł przetestować i zobaczyć w czasie rzeczywim poziom dźwięku z mikrofonu przed i po przefiltrowaniu szumów przez filtr WASM RNNoise.
 
 

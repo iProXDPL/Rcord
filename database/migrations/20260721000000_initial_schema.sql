@@ -12,6 +12,8 @@ create table public.profiles (
     current_theme text default 'dark',
     current_accent text default 'purple',
     current_border_url text,
+    is_admin boolean default false not null,
+    birthdate date,
     created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
@@ -96,6 +98,7 @@ create table public.channels (
     name text, -- null dla DM, nazwa dla Group DM lub kanałów serwera
     type text default 'text' check (type in ('text', 'voice', 'dm', 'group_dm')),
     is_temporary boolean default false,
+    is_nsfw boolean default false not null,
     created_by uuid references public.profiles(id) on delete set null,
     position integer default 0
 );
