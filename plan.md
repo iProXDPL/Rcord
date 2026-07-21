@@ -110,6 +110,7 @@ graph TD
 
 ### 4. Nakładka (Overlay) i wersja Mobilna
 - **Nakładka (Overlay)** będzie działać **tylko na komputerach stacjonarnych (Windows, Linux)**.
+- **Synchronizacja Stanu (Zustand Multi-Window Sync)**: Zarówno okno główne, jak i nakładka posiadają niezależne stany Zustand. Aby zapewnić natychmiastową synchronizację (np. wyciszenie mikrofonu, zmiana aktywnego pokoju głosowego, nowa wiadomość w czacie nakładki), wykorzystamy natywny autobus zdarzeń Tauri IPC (`emit` / `listen`), co eliminuje opóźnienia sieciowe i nie obciąża bazy danych.
 - Na **Androidzie** oraz w głównym oknie desktopowym skupiamy się na standardowym, dopracowanym interfejsie czatu.
 - **Funkcje Okna Czatu**:
   - **Pełne wsparcie dla Markdown (MD)**: renderowanie pogrubień, kursywy, list, cytatów oraz bloków kodu z kolorowaniem składni (np. dla języków programowania).
