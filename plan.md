@@ -85,7 +85,9 @@ graph TD
 
 ### 4. Tymczasowe Kanały i Uprawnienia
 - System uprawnień na serwerach będzie kontrolować tworzenie kanałów.
-- Użytkownicy ze specjalnymi uprawnieniami w danej grupie kanałów będą mieli możliwość tworzenia kanałów tymczasowych (które automatycznie znikają, gdy wszyscy je opuszczą).
+- **Automatyczne kanały tymczasowe (Auto-cleanup)**: Użytkownicy z uprawnieniami mogą tworzyć kanały tymczasowe (`is_temporary = true`). Ich cykl życia jest w pełni zautomatyzowany po stronie bazy danych:
+  - Gdy użytkownik dołącza do kanału głosowego, jego stan jest zapisywany w tabeli `voice_states`.
+  - Gdy ostatni użytkownik opuści kanał (liczba rekordów w `voice_states` dla tego `channel_id` spadnie do 0), trigger PostgreSQL (`on_voice_state_left`) automatycznie usunie ten kanał z tabeli `channels`, odciążając klienty.
 
 ### 5. Backend i Docker
 - **Docker jest zainstalowany i skonfigurowany.**

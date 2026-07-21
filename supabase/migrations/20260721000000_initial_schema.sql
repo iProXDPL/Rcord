@@ -362,5 +362,59 @@ begin
 end;
 $$ language plpgsql security definer;
 
+-- 15. Voice States (tracking active speaker sessions)
+create table public.voice_states (
+    user_id uuid references public.profiles(id) on delete cascade primary key,
+    server_id uuid references public.servers(id) on delete cascade, -- null dla DMs
+    channel_id uuid references public.channels(id) on delete cascade not null,
+    is_muted boolean default false not null,
+    is_deafened boolean default false not null,
+    is_screen_sharing boolean default false not null,
+    is_video_on boolean default false not null,
+    joined_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+alter table public.voice_states enable row level security;
+
+-- RLS Policies for voice states
+create policy "Allow select voice states for all authenticated" on public.voice_states for select to authenticated using (true);
+create policy "Allow modify own voice state" on public.voice_states for all to authenticated using (user_id = auth.uid());
+
+-- Trigger to automatically delete temporary channels when they become empty
+create or replace function public.handle_temporary_channels_cleanup()
+returns trigger as $$
+declare
+    v_old_channel_id uuid;
+    v_is_temp boolean;
+    v_count integer;
+begin
+    -- Determine which channel ID was left
+    if tg_op = 'DELETE' then
+        v_old_channel_id := old.channel_id;
+    elsif tg_op = 'UPDATE' then
+        v_old_channel_id := old.channel_id;
+    end if;
+
+    if v_old_channel_id is not null then
+        -- Check if it was a temporary channel
+        select is_temporary into v_is_temp from public.channels where id = v_old_channel_id;
+        if v_is_temp = true then
+            -- Count remaining users in the channel
+            select count(*) into v_count from public.voice_states where channel_id = v_old_channel_id;
+            if v_count = 0 then
+                -- Delete the channel
+                delete from public.channels where id = v_old_channel_id;
+            end if;
+        end if;
+    end if;
+    return null;
+end;
+$$ language plpgsql security definer;
+
+create or replace trigger on_voice_state_left
+    after delete or update on public.voice_states
+    for each row execute procedure public.handle_temporary_channels_cleanup();
+
+
 
 
