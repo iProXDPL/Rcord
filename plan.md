@@ -102,6 +102,10 @@ Interfejs użytkownika będzie wzorowany na sprawdzonym i ergonomicznym układzi
 4. **Pasek Członków (Rightmost Sidebar)** – **zwijany (collapsible)**:
    - Możliwość ukrycia/zwinięcia paska członków, aby powiększyć panel główny czatu.
    - Wyświetla listę członków serwera, którzy mają uprawnienia do wyświetlania obecnie wybranego kanału (filtrowanie na podstawie ról i uprawnień kanału), dzięki czemu użytkownicy czatu dokładnie wiedzą, kto ma dostęp do treści i widzi ich wiadomości. Członkowie są pogrupowani według ról lub statusu obecności (online, idle, dnd, offline) wraz z ich statusami aktywności w grach (Rich Presence).
+5. **System Powiadomień (Notifications)**:
+   - **Odznaki (Badges)**: Ikony serwerów i kanałów wyświetlają licznik nieprzeczytanych wiadomości (czerwona odznaka z liczbą).
+   - **Natywne powiadomienia desktopowe**: Wykorzystanie Tauri Notification API do wyświetlania systemowych powiadomień push (popup OS) z dźwiękiem przy nowych wiadomościach, wzmianach (@mention) i zaproszeniach do znajomych.
+   - **Wyciszanie per kanał/serwer**: Użytkownik może wyciszyć powiadomienia dla konkretnego kanału lub całego serwera (mute), zachowując odznakę bez dźwięku, lub całkowicie ukryć powiadomienia.
 
 ---
 
