@@ -559,19 +559,19 @@ create policy "Allow insert attachments max 50MB" on storage.objects for insert 
     (metadata->>'size')::int <= 52428800
 );
 
--- Policies for emojis bucket (max 256KB, images only)
+-- Policies for emojis bucket (max 1MB, images/webp/gifs only)
 create policy "Allow read emojis for all" on storage.objects for select to authenticated using (bucket_id = 'emojis');
-create policy "Allow insert emojis max 256KB images" on storage.objects for insert to authenticated with check (
+create policy "Allow insert emojis max 1MB images" on storage.objects for insert to authenticated with check (
     bucket_id = 'emojis' and 
-    (metadata->>'size')::int <= 262144 and
+    (metadata->>'size')::int <= 1048576 and
     metadata->>'mimetype' ~ 'image/.*'
 );
 
--- Policies for soundboard bucket (max 500KB, audio only)
+-- Policies for soundboard bucket (max 2MB, audio only)
 create policy "Allow read soundboard for all" on storage.objects for select to authenticated using (bucket_id = 'soundboard');
-create policy "Allow insert soundboard max 500KB audio" on storage.objects for insert to authenticated with check (
+create policy "Allow insert soundboard max 2MB audio" on storage.objects for insert to authenticated with check (
     bucket_id = 'soundboard' and 
-    (metadata->>'size')::int <= 512000 and
+    (metadata->>'size')::int <= 2097152 and
     metadata->>'mimetype' ~ 'audio/.*'
 );
 

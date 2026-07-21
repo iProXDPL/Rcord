@@ -178,14 +178,23 @@ Tauri w Rust będzie monitorować uruchomione procesy gier na podstawie **statyc
   - **Motywy aplikacji (Themes)**: Ciemne, jasne oraz customowe motywy interfejsu (np. styl retro, cyberpunk).
   - **Skórki i motywy do gier (Game Skins & Themes)**: Dodatkowe zestawy grafik dla bierek szachowych (np. styl pixelart, neon, fantasy), plansz szachowych, a także alternatywne motywy wizualne dla Sapera i Snake'a.
 - **Własne emotki serwera (Custom Server Emojis) i Limity**:
-  - Domyślny limit na serwerze to **50 emotek** (pliki graficzne png, jpg, webp, gif o rozmiarze do 256 KB).
-  - Triggery bazy danych PostgreSQL blokują przekroczenie tego limitu.
-  - Serwery mogą podnieść limit (np. do 250 emotek) dzięki wsparciu (boostowaniu serwera/subskrypcjom).
+  - Obsługiwane formaty: PNG, JPG, GIF oraz **WEBP** (optymalny i powszechnie stosowany format animacji).
+  - Maksymalny rozmiar pliku emotki został podniesiony do **1 MB** (idealne dla wysokiej jakości animacji WebP/GIF).
+  - Triggery bazy danych PostgreSQL blokują przekroczenie limitów ilościowych.
+- **Poziomy Wspierania Serwera (Server Boosting - 5 Etapów)**:
+  - Serwery posiadają przypisany poziom wsparcia od **Poziomu 0 (Darmowy)** do **Poziomu 5 (Maksymalne Wsparcie)**, co automatycznie zwiększa limity na emotki i dźwięki:
+    - **Poziom 0 (Darmowy)**: Max 50 emotek, 10 dźwięków.
+    - **Poziom 1**: Max 100 emotek, 20 dźwięków.
+    - **Poziom 2**: Max 150 emotek, 30 dźwięków.
+    - **Poziom 3**: Max 200 emotek, 40 dźwięków.
+    - **Poziom 4**: Max 250 emotek, 50 dźwięków.
+    - **Poziom 5 (Premium)**: Max 500 emotek, 100 dźwięków (lub brak limitów w bazie).
+  - Globalny Admin Rcord może zmieniać te limity (lub poziomy wsparcia) bezpośrednio w bazie danych lub za pomocą panelu administratora (Admin Dashboard).
 - **Wklejanie gifów z hostingów i Ulubione**: Integracja z wyszukiwaniem gifów (Tenor/Giphy). Użytkownicy mogą wklejać gify bezpośrednio na czat oraz zapisywać dowolne gify lub emotki do swojej podręcznej listy "Ulubionych" (szybki dostęp w panelu wysyłania wiadomości).
 - **Soundboard na kanałach głosowych i Limity**:
-  - Serwery posiadają własną tablicę dźwięków (Soundboard) z domyślnym limitem **10 dźwięków** (pliki audio mp3/ogg do 500 KB).
+  - Serwery posiadają własną tablicę dźwięków (Soundboard) – obsługiwane pliki audio MP3/OGG o podniesionym maksymalnym rozmiarze do **2 MB** (pozwala na wysoką jakość klipów 5-10 sekundowych).
   - Dźwięki są odtwarzane w czasie rzeczywistym przez WebRTC (LiveKit DataChannel).
-  - Limit dźwięków może zostać zwiększony w przypadku wspierania serwera.
+  - Limit dźwięków rośnie wraz z poziomem wspierania serwera (opisane wyżej).
 - **Rola Globalnego Administratora Rcord (Admin Dashboard)**:
   - Super-administratorzy Rcord posiadają dostęp do specjalnego panelu administracyjnego (Dashboard) z osobną stroną logowania.
   - Mogą przeglądać listę serwerów, użytkowników i zgłoszeń, a także zawieszać lub usuwać serwery propagujące nienawiść, treści nielegalne (np. nazistowskie symbole) lub łamiące regulamin.
